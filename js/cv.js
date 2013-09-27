@@ -138,12 +138,40 @@ CV.prototype.grayscale = function ( weight ){
 //
 // [The Otsu method](http://en.wikipedia.org/wiki/Otsu's_method‎) is an 
 //	algorithm to determine a threshold with which
-// to threshold.
+// to threshold. This routine implements the one described in the wiki
+// link above.
 //
 // This routine returns the threshold value
 //
 CV.prototype.otsu = function( ){
-	return 0;
+	var hist = this.histogram(0);//no normalization
+	var imgData = this.imgData.data , 
+		len = imgData.length ;
+	var pixelCnt = len / 4;
+	var i , j ;
+	var sum = 0 , sumb , cntb , cntf ;
+	for ( i = 0 ; i < 256; ++ i )
+		sum += i * hist[i];
+	var curMax = 0 ;
+	var thres = 0;
+	for ( i = 0 ; i < 256; ++i ){
+		cntb += hist[i] ;	//add the number of pixels of current gray level to front
+		cntf = pixelCnt - cntb ;
+		if ( cntb == 0 ) continue;
+		if ( cntf == 0 ) break;
+		
+		sumb += i * hist[i];
+		
+		var meanf = ( sum - sumb ) / cntf ; //mean foreground
+		var meanb = sumb / cntb;	//mean background
+		
+		var diff = cntb*cntf*(meanb-meanf)*(meanb-meanf);
+		if ( diff > curMax ) {
+			curMax = diff ;
+			thres = i ;
+		}
+	}
+	return i;
 }
 
 //
@@ -152,6 +180,7 @@ CV.prototype.otsu = function( ){
 // ## `thresholding`
 //
 // This routine 
+//
 CV.prototype.threshold = function( thres , white , black ){
 	if ( thres == null )
 		thres = this.otsu();	//auto threshold
@@ -160,7 +189,7 @@ CV.prototype.threshold = function( thres , white , black ){
 		black = colors.black ;
 	}
 	/* we assume that the image is already in grayscale here. */
-	var i , j ,  len = this.imgData.length.data , imgData = this.imgData.data ;
+	var i , j ,  len = this.imgData.data.length , imgData = this.imgData.data ;
 	for ( i = 0; i < len ; i += 4 ){
 		var sum = 0;
 		for ( j = 0 ; j < 3 ; ++ j )

@@ -16,6 +16,12 @@ var imgParam = {
 //
 //------------------------------------------------------------
 //
+function updateImg(){
+	window.ImageCV = new CV( getImageData() );	//write to global variable
+}
+//
+//-------------------------------
+//
 function loadImg(){
 	function fitDimensions(){
 		imgParam = getOriginalImageDimension( $('#imgLoad')[0] )
@@ -33,6 +39,7 @@ function loadImg(){
 	fitDimensions();
 
 	ctx.drawImage(img,0,0);
+	updateImg();
 }
 //
 //------------------------------------------------------------
@@ -106,6 +113,5 @@ function getOriginalImageDimension( img_element ) {
 //-------------------------------------------------------------
 //
 $('#grayscaleImg').click( function(){
-	var T = new CV( getImageData() );
-	canvasContext.putImageData( T.grayscale().getImgData() , 0 , 0 );
+	canvasContext.putImageData( ImageCV.grayscale().getImgData() , 0 , 0 );
 })
