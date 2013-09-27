@@ -102,3 +102,10 @@ function getOriginalImageDimension( img_element ) {
 		height: t.height
 	};
 }
+//
+//-------------------------------------------------------------
+//
+$('#grayscaleImg').click( function(){
+	var T = new CV( getImageData() );
+	canvasContext.putImageData( T.grayscale().getImgData() , 0 , 0 );
+})
