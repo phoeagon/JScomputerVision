@@ -16,12 +16,18 @@ colors = {
 	black : [ 0 , 0 ,  0 ] 
 };
 
+//
+//------------------------------------------------------------
+//
 // ##The object storing global configurations
 //
 CVoptions = {
 	debug : false /* whether or not dump extra info to console*/
 }
 
+//
+//------------------------------------------------------------
+//
 // ## `CV` Object Constructor
 //
 // This constructor takes in the image data object as its parameter 
@@ -33,6 +39,9 @@ function CV ( imgData ){
 	this.imgData = imgData;
 }
 
+//
+//------------------------------------------------------------
+//
 // ##`cv.histogram` - histogram
 // 
 // Generate histogram information of a grayscale image.
@@ -62,12 +71,18 @@ CV.prototype.histogram = function( ){
 	return hist;
 }
 
+//
+//------------------------------------------------------------
+//
 // ## `getImgData`  
 // This method returns the image data
 CV.prototype.getImgData = function (){
 	return this.imgData;
 }
 
+//
+//------------------------------------------------------------
+//
 // ##`grayscale`
 //
 // Convert the image stored in the current `CV` object to become grayscale.
@@ -110,6 +125,9 @@ CV.prototype.grayscale = function ( weight ){
 	return this;
 }
 
+//
+//------------------------------------------------------------
+//
 // ##`otsu`
 //
 // [The Otsu method](http://en.wikipedia.org/wiki/Otsu's_method‎) is an 
@@ -122,6 +140,9 @@ CV.prototype.otsu = function( ){
 	return 0;
 }
 
+//
+//------------------------------------------------------------
+//
 // ## `thresholding`
 //
 // This routine 
@@ -155,12 +176,18 @@ CV.prototype.threshold = function( thres , white , black ){
 	}
 	return this;
 }
+//
+//------------------------------------------------------------
+//
 // ## Dilation
 //
 //
 CV.prototype.dilate = function( matrix ){
 	return this;
 }
+//
+//------------------------------------------------------------
+//
 // ## Erosion
 //
 //

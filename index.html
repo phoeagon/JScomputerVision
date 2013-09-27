@@ -14,34 +14,14 @@
 <body>
 
 <p>Image to use:</p>
-<img id="imgLoad" src="./img/color.jpg" alt="The Scream" width="220" height="277">
+<img id="imgLoad" src="./img/test.jpg" alt="The Scream">
 
 <p>Canvas:</p>
 <canvas id="myCanvas" width="250" height="300" style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
-<script>
-function fitDimensions(){
-	var width = $('#imgLoad').attr('width');
-	var height = $('#imgLoad').attr('height');
-	$('#myCanvas').attr('width' , $('#imgLoad').attr('width') );
-	$('#myCanvas').attr('height' , $('#imgLoad').attr('height') );
-}
-function loadImg(){
-	var c=canvas=$("#myCanvas")[0];
-	var ctx=canvasContext=c.getContext("2d");
-	var img=$("#imgLoad")[0];
-	fitDimensions();
-
-	ctx.drawImage(img,0,0);
-}
-function getImageData(){
-	var width = $('#myCanvas').attr('width');
-	var height = $('#myCanvas').attr('height');
-	return canvasContext.getImageData( 0 , 0 , width , height );
-}
-$(window).load( loadImg ); // $(document).load doesn't work here as we have to wait till image itself is loaded
-</script>
+<script type="text/javascript" src="./js/ui.js"></script>
+<script type="text/javascript" src="./js/test.js"></script>
 
 </body>
 </html>
