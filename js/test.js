@@ -22,6 +22,7 @@ function testGrayscale(){
 			canvasContext.putImageData( 
 				T .grayscale().getImgData(), 
 				/* draw at offset ( 10 ,10 )*/ 10,10 )
+			$('#imgLoad').unbind('load');//remove handler
 		}
 	)
 }

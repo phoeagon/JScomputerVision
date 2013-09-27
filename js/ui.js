@@ -42,3 +42,17 @@ function getImageData(){
 
 $(window).load( loadImg ); 
 // $(document).load doesn't work here as we have to wait till image itself is loaded
+$('#savedImg').click(
+	function(e){
+		var url = $('#myCanvas')[0].toDataURL();
+		window.open(url);
+		e.preventDefault();
+	}
+)
+$('#switchImg').click(
+	function(e){
+		var url = $('#myCanvas')[0].toDataURL();
+		$('#imgLoad').attr('src',url);
+		e.preventDefault();
+	}
+)
