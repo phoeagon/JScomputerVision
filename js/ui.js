@@ -18,6 +18,7 @@ var imgParam = {
 //
 function updateImg(){
 	window.ImageCV = new CV( getImageData() );	//write to global variable
+	$('#thresv').val( ImageCV.otsu() )
 }
 //
 //-------------------------------
@@ -113,5 +114,23 @@ function getOriginalImageDimension( img_element ) {
 //-------------------------------------------------------------
 //
 $('#grayscaleImg').click( function(){
+	var ImageCV = new CV( getImageData() );
 	canvasContext.putImageData( ImageCV.grayscale().getImgData() , 0 , 0 );
+})
+//
+//--------------------------------------------------------------
+//
+$('#auto_thresholdImg').click( function(){
+	//var ImageCV = new CV( getImageData() );
+	var thres = ImageCV.otsu();
+	$('#thresv').val( thres );
+	$('#thresholdImg').click();
+})
+$('#thresholdImg').click( function(){
+	//var ImageCV = new CV( getImageData() );
+	var thres = $('#thresv').val();
+	canvasContext.putImageData( ImageCV.threshold( thres ).getImgData() , 0 , 0 );
+})
+$('#reloadImg').click( function(){
+	loadImg();
 })

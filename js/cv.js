@@ -147,16 +147,16 @@ CV.prototype.otsu = function( ){
 	var hist = this.histogram(0);//no normalization
 	var imgData = this.imgData.data , 
 		len = imgData.length ;
-	var pixelCnt = len / 4;
 	var i , j ;
-	var sum = 0 , sumb , cntb , cntf ;
+	var pixCnt = len / 4 * 3; //omit alpha channel
+	var sum = 0 , sumb=0 , cntb=0 , cntf=0 ;
 	for ( i = 0 ; i < 256; ++ i )
 		sum += i * hist[i];
-	var curMax = 0 ;
+	var curMax = -1 ;
 	var thres = 0;
 	for ( i = 0 ; i < 256; ++i ){
 		cntb += hist[i] ;	//add the number of pixels of current gray level to front
-		cntf = pixelCnt - cntb ;
+		cntf = pixCnt - cntb ;
 		if ( cntb == 0 ) continue;
 		if ( cntf == 0 ) break;
 		
@@ -171,7 +171,7 @@ CV.prototype.otsu = function( ){
 			thres = i ;
 		}
 	}
-	return i;
+	return thres;
 }
 
 //
