@@ -18,8 +18,10 @@ var imgParam = {
 //
 function loadImg(){
 	function fitDimensions(){
-		imgParam.width = $('#imgLoad')[0].width
-		imgParam.height = $('#imgLoad')[0].height
+		imgParam = getOriginalImageDimension( $('#imgLoad')[0] )
+		// DEPRECATED: because this gets the 'resized' dimension of the image
+		//imgParam.width = $('#imgLoad')[0].width
+		//imgParam.height = $('#imgLoad')[0].height
 		
 		$('#myCanvas').attr('width' , imgParam.width );
 		$('#myCanvas').attr('height' ,imgParam.height );
@@ -40,8 +42,14 @@ function getImageData(){
 			getImageData( 0 , 0 , imgParam.width , imgParam.height );
 }
 
+//
+//------------------------------------------------------------
+//
 $(window).load( loadImg ); 
 // $(document).load doesn't work here as we have to wait till image itself is loaded
+//
+//------------------------------------------------------------
+//
 $('#savedImg').click(
 	function(e){
 		var url = $('#myCanvas')[0].toDataURL();
@@ -49,6 +57,9 @@ $('#savedImg').click(
 		e.preventDefault();
 	}
 )
+//
+//------------------------------------------------------------
+//
 $('#switchImg').click(
 	function(e){
 		var url = $('#myCanvas')[0].toDataURL();
@@ -56,3 +67,38 @@ $('#switchImg').click(
 		e.preventDefault();
 	}
 )
+//
+//------------------------------------------------------------
+//
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('#imgLoad').attr('src', e.target.result)
+				.unbind('load').load( function(){
+						loadImg();
+					});
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+//
+//------------------------------------------------------------
+//
+$('#imgInp').change(function(){
+	readURL(this)
+} )
+
+//
+//------------------------------------------------------------
+//
+
+function getOriginalImageDimension( img_element ) {
+    var t = new Image();
+    t.src = (img_element.getAttribute ? img_element.getAttribute("src") : false) || img_element.src;
+    return {
+		width:  t.width ,
+		height: t.height
+	};
+}

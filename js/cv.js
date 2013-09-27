@@ -46,6 +46,10 @@ function CV ( imgData ){
 // 
 // Generate histogram information of a grayscale image.
 //
+// This routine takes in one parameter, `normalize`. If `normalize`
+// can be converted to `true`, normalization is conducted before returning
+// result. Default value is `false`
+//
 // This routine returns the histogram as an `Array`
 //
 CV.prototype.histogram = function( ){

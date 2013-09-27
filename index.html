@@ -13,24 +13,32 @@
 	<script type="text/javascript" src="./js/cv.js"></script>
 </head>
 <body>
-<div class="row">
-	<div class="span4">
+<div class="container-fluid">
+<div class="row-fluid">
+	<div class="span3">
 	<p>Image to use:</p>
-	<img id="imgLoad" src="./img/test.jpg" alt="The Scream">
+	<img id="imgLoad" src="./img/test.jpg" alt="The Scream" width='400px'>
 	</div>
 	
-	<div class="span4">
+	<div class="span5">
 	<p>Canvas:</p>
-	<canvas id="myCanvas" width="250" height="300" style="border:1px solid #d3d3d3;">
+	<canvas id="myCanvas" style="border:1px solid #d3d3d3;">
 	Your browser does not support the HTML5 canvas tag.</canvas>
 	</div>
 	
-	<div class="span4">
+	<div class="span3">
 		<p>Tools</p>
+		<div>
+			<form id="upload_form">
+			<input type='file' id="imgInp" />
+			</form>
+		</div>
+		<br/>
 		<a href="#" id="grayscaleImg" class='btn'>To Grayscale</a><br/>
 		<a href="#" id="savedImg" class='btn'>Save Image</a><br/>
 		<a href="#" id="switchImg" class='btn'>Right to Left</a><br/>
 	</div>
+</div>
 </div>
 <script type="text/javascript" src="./js/ui.js"></script>
 <script type="text/javascript" src="./js/test.js"></script>
