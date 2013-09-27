@@ -52,7 +52,7 @@ function CV ( imgData ){
 //
 // This routine returns the histogram as an `Array`
 //
-CV.prototype.histogram = function( ){
+CV.prototype.histogram = function( normalize ){
 	var hist = [] , len = this.imgData.data.length ;
 	var imgData = this.imgData.data;
 	var i;/*placeholder*/
@@ -63,11 +63,13 @@ CV.prototype.histogram = function( ){
 			hist[ imgData[i] ]++;
 		}
 	}
-	var sum = 0;
-	for ( i = 0 ; i < 256 ; ++i )
-		sum += hist[i];
-	for ( i = 0 ; i < 256 ; ++ i )
-		hist[i] /= sum;
+	if ( normalize ){
+		var sum = 0;
+		for ( i = 0 ; i < 256 ; ++i )
+			sum += hist[i];
+		for ( i = 0 ; i < 256 ; ++ i )
+			hist[i] /= sum;
+	}
 	if ( CVoptions.debug ){
 		console.log( "histogram" );
 		console.log( hist );

@@ -8,25 +8,31 @@
 <html>
 <head>
 	<title>Computer Vision. Course Project by Qiu Zhe</title>
-	<link href="./css/bt.css" rel="stylesheet">
+	<link href="./css/bt.css" rel="stylesheet"/>
+<style>
+.fullpagecol{
+	height: 100%;
+}
+</style>
 	<script type="text/javascript" src="./extern/jq.js"></script>
 	<script type="text/javascript" src="./js/cv.js"></script>
 </head>
 <body>
-<div class="container-fluid">
-<div class="row-fluid">
-	<div class="span3">
+<div class="container-fluid fullpagecol">
+
+<div class="row-fluid fullpagecol">
+	<div class="span3 fullpagecol">
 	<p>Image to use:</p>
 	<img id="imgLoad" src="./img/test.jpg" alt="The Scream" width='400px'>
 	</div>
 	
-	<div class="span5">
+	<div class="span5 fullpagecol">
 	<p>Canvas:</p>
 	<canvas id="myCanvas" style="border:1px solid #d3d3d3;">
 	Your browser does not support the HTML5 canvas tag.</canvas>
 	</div>
 	
-	<div class="span3">
+	<div class="span3 fullpagecol" style='background-color:rgba(255,230,255,0.3);'>
 		<p>Tools</p>
 		<div>
 			<form id="upload_form">
