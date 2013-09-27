@@ -16,11 +16,11 @@ colors = {
 	black : [ 0 , 0 ,  0 ] 
 };
 
-// The `CV` object
-//----------------
-// The main CV object that stores all sorts of methods
-CV = {
-};
+// ##The object storing global configurations
+//
+CVoptions = {
+	debug : false /* whether or not dump extra info to console*/
+}
 
 // ## `CV` Object Constructor
 //
@@ -33,15 +33,15 @@ function CV ( imgData ){
 	this.imgData = imgData;
 }
 
-// ##`cv.histagram` - Histagram
+// ##`cv.histogram` - histogram
 // 
-// Generate histagram information of a grayscale image.
+// Generate histogram information of a grayscale image.
 //
-// This routine returns the histagram as an `Array`
+// This routine returns the histogram as an `Array`
 //
 CV.prototype.histogram = function( ){
-	var hist = [] , len = this.imgData.length ;
-	var imgData = this.imgData;
+	var hist = [] , len = this.imgData.data.length ;
+	var imgData = this.imgData.data;
 	var i;/*placeholder*/
 	for ( i=0; i<256; ++i )
 		hist[i] = 0;
@@ -53,8 +53,12 @@ CV.prototype.histogram = function( ){
 	var sum = 0;
 	for ( i = 0 ; i < 256 ; ++i )
 		sum += hist[i];
-	for ( int i = 0 ; i < 256 ; ++ i )
+	for ( i = 0 ; i < 256 ; ++ i )
 		hist[i] /= sum;
+	if ( CVoptions.debug ){
+		console.log( "histogram" );
+		console.log( hist );
+	}
 	return hist;
 }
 
@@ -87,15 +91,21 @@ CV.prototype.grayscale = function ( weight ){
 		weight = [ 1/3 , 1/3 , 1/3 ]
 	}
 	var i , j ;
-	var len = this.imgData.length();
+	var len = this.imgData.data.length;
+	var imgData = this.imgData.data;
 	for ( i = 0 ; i < len ; i += 4 ){
 		var sum = 0;
 		for ( j = 0 ; j < 3 ; ++ j )
-			sum += imgData [j] * weight[j]
+			sum += imgData [i+j] * weight[j]
 		/* imgData[i+3] is the alpha channel */
 		sum = Math.round(sum);
 		for ( j = 0 ; j < 3 ; ++ j )
-			imgData[j] = sum ;
+			imgData[ i+j ] = sum ;
+	}
+	if ( CVoptions.debug ){
+		console.log( "grayscale" );
+		console.log( weight );
+		console.log( this.imgData );
 	}
 	return this;
 }
@@ -123,7 +133,7 @@ CV.prototype.threshold = function( thres , white , black ){
 		black = colors.black ;
 	}
 	/* we assume that the image is already in grayscale here. */
-	var i , j ,  len = this.imgData.length , img = this.imgData ;
+	var i , j ,  len = this.imgData.length.data , imgData = this.imgData.data ;
 	for ( i = 0; i < len ; i += 4 ){
 		var sum = 0;
 		for ( j = 0 ; j < 3 ; ++ j )
@@ -139,5 +149,21 @@ CV.prototype.threshold = function( thres , white , black ){
 				imgData[ i+j ] = black[ j ] ;
 		}
 	}
+	if ( CVoptions.debug ){
+		console.log( "threshold" );
+		console.log( this.imgData );
+	}
+	return this;
+}
+// ## Dilation
+//
+//
+CV.prototype.dilate = function( matrix ){
+	return this;
+}
+// ## Erosion
+//
+//
+CV.prototype.erose = function( matrix ){
 	return this;
 }
