@@ -217,7 +217,7 @@ CV.prototype.threshold = function( thres , white , black ){
 		for ( j = 0 ; j < 3 ; ++ j )
 			sum += imgData[i+j] ; //add R,G,B values
 		sum = Math.round( sum / 3 ); //compute arithmetic average
-		if ( sum >= thres )
+		if ( sum > thres )
 		{ /* set to white */
 			for ( j = 0; j<3; ++j )
 				imgData[ i+j ] = white[ j ] ;
