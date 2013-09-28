@@ -257,7 +257,7 @@ CV.prototype.dilate = function( matrix , fit_color , iteration ){
 								( tmp_color==fit_color[0] /*&&
 								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
 								  imgData[ sub * 4 + 2 ]==fit_color[2]*/ );
-							//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
+							;//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
 						}
 					}
 				var sub = GETSUB( i  , j  );
@@ -265,8 +265,8 @@ CV.prototype.dilate = function( matrix , fit_color , iteration ){
 				tmp[ sub*4 + 1 ] = cur_value ? 255 : 0 ;//G
 				tmp[ sub*4 + 2 ] = cur_value ? 255 : 0 ;//B
 				tmp[ sub*4 + 3 ] = imgData[ sub*4 + 3 ];//A
-				//if ( imgData[ sub*4 ] !== tmp[ sub*4 ]  )
-				//	console.log("#");;
+				;//if ( imgData[ sub*4 ] !== tmp[ sub*4 ]  )
+				;//	console.log("#");;
 			}
 		for ( i = 0 ; i < len ; ++ i )
 			imgData[ i ] = tmp [ i ];
@@ -319,7 +319,7 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 								( tmp_color==fit_color[0] /*&&
 								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
 								  imgData[ sub * 4 + 2 ]==fit_color[2]*/ );
-							//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
+							;//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
 						}
 					}
 				var sub = GETSUB( i  , j  );
@@ -327,8 +327,8 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 				tmp[ sub*4 + 1 ] = cur_value ? 255 : 0 ;//G
 				tmp[ sub*4 + 2 ] = cur_value ? 255 : 0 ;//B
 				tmp[ sub*4 + 3 ] = imgData[ sub*4 + 3 ];//A
-				//if ( imgData[ sub*4 ] !== tmp[ sub*4 ]  )
-				//	console.log("#");;
+				;//if ( imgData[ sub*4 ] !== tmp[ sub*4 ]  )
+				;//	console.log("#");;
 			}
 		for ( i = 0 ; i < len ; ++ i )
 			imgData[ i ] = tmp [ i ];

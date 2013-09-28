@@ -8,6 +8,7 @@
 
 //
 //------------------------------------------------------------
+// ## Config placeholders
 //
 var imgParam = {
 	width : 0 , 
@@ -15,7 +16,7 @@ var imgParam = {
 }
 //
 //------------------------------------------------------------
-//
+// 
 function updateImg(){
 	window.ImageCV = new CV( getImageData() );	//write to global variable
 	$('#thresv').val( ImageCV.otsu() )
@@ -26,9 +27,9 @@ function updateImg(){
 function loadImg(){
 	function fitDimensions(){
 		imgParam = getOriginalImageDimension( $('#imgLoad')[0] )
-		// DEPRECATED: because this gets the 'resized' dimension of the image
-		//imgParam.width = $('#imgLoad')[0].width
-		//imgParam.height = $('#imgLoad')[0].height
+		;// DEPRECATED: because this gets the 'resized' dimension of the image
+		;//imgParam.width = $('#imgLoad')[0].width
+		;//imgParam.height = $('#imgLoad')[0].height
 		
 		$('#myCanvas').attr('width' , imgParam.width );
 		$('#myCanvas').attr('height' ,imgParam.height );

@@ -29,24 +29,42 @@ function testGrayscale(){
 //
 //------------------------------------------------------------
 //
+// ## testErode
+//
+// This routine tests the erosion routine of the CV lib.
+// It assumes that currently there's a thresholded ( single-valued )
+// image on canvas.
+//
+// Tested param: rectangular brush of (3,3), fitting white
+// (255,255,255) as foreground color
+//
 function testErode(){
 	var T = new CV( getImageData() );
-	var b = new Object( brush.rect( 3 , 3 ) );
-	var dt = T.erode( b , [255,255,255]  ).getImgData();
+	var b = new Object( brush.rect( 3 , 3 ) );//brush of a rectangular (3,3)
+	var dt = T.erode( b , [255,255,255]  ).getImgData();//get processed data
 	console.log( dt );
 	canvasContext.putImageData( 
 		 dt ,
-		0 , 0 )
+		0 , 0 ) // draw image back to canvas
 }
 //
 //------------------------------------------------------------
 //
+// ## testDilate
+//
+// This routine tests the dilation routine of the CV lib.
+// It assumes that currently there's a thresholded ( single-valued )
+// image on canvas.
+//
+// Tested param: rectangular brush of (3,3), fitting white
+// (255,255,255) as foreground color
+//
 function testDilate(){
 	var T = new CV( getImageData() );
-	var b = new Object( brush.rect( 3 , 3 ) );
-	var dt = T.dilate( b , [255,255,255]  ).getImgData();
+	var b = new Object( brush.rect( 3 , 3 ) );//brush of a rectangular (3,3)
+	var dt = T.dilate( b , [255,255,255]  ).getImgData();//get processed data
 	console.log( dt );
 	canvasContext.putImageData( 
 		 dt ,
-		0 , 0 )
+		0 , 0 ) // draw image back to canvas
 }
