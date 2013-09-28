@@ -6,6 +6,14 @@
 //	This library is implemented as part of a course project for 
 //  Computer Vision (2013 Fall).
 //
+// ## Quick Start
+//
+//      var canvas = $('#canvas')[0]; //get canvas
+//      var context = canvas.getContext("2d"); // get canvas context
+//      var imageCV = new CV( context.getImageData( 0 , 0 , 100 , 100 ) ); //new instance
+//		context.putImageData( imageCV.grayscale().getImgData() , 0 , 0 );
+//          // convert to gray scale, write back
+//
 //-----------------------------
 //
 
@@ -28,7 +36,7 @@ CVoptions = {
 //
 //------------------------------------------------------------
 //
-// ## `CV` Object Constructor
+// ## `CV` Constructor
 //
 // This constructor takes in the image data object as its parameter 
 // and construct a corresponding `CV` object in which the image is stored.
@@ -42,7 +50,7 @@ function CV ( imgData ){
 //
 //------------------------------------------------------------
 //
-// ##`cv.histogram` - histogram
+// ## histogram
 // 
 // Generate histogram information of a grayscale image.
 //
@@ -80,7 +88,7 @@ CV.prototype.histogram = function( normalize ){
 //
 //------------------------------------------------------------
 //
-// ## `getImgData`  
+// ## getImgData  
 // This method returns the image data
 CV.prototype.getImgData = function (){
 	return this.imgData;
@@ -89,7 +97,7 @@ CV.prototype.getImgData = function (){
 //
 //------------------------------------------------------------
 //
-// ##`grayscale`
+// ##Grayscale
 //
 // Convert the image stored in the current `CV` object to become grayscale.
 //
@@ -134,14 +142,14 @@ CV.prototype.grayscale = function ( weight ){
 //
 //------------------------------------------------------------
 //
-// ##`otsu`
+// ##Otsu's method
 //
 // [The Otsu method](http://en.wikipedia.org/wiki/Otsu's_method‎) is an 
 //	algorithm to determine a threshold with which
 // to threshold. This routine implements the one described in the wiki
 // link above.
 //
-// This routine returns the threshold value
+// This routine returns the threshold value returned by the Otsu method.
 //
 CV.prototype.otsu = function( ){
 	var hist = this.histogram(0);//no normalization
@@ -177,9 +185,21 @@ CV.prototype.otsu = function( ){
 //
 //------------------------------------------------------------
 //
-// ## `thresholding`
+// ## thresholding
 //
-// This routine 
+// This routine implements *thresholding* operation
+// for images.
+//
+// It takes in three parameters. `thres` is the *threshold* to use.
+// If `thres` is not specified, `otsu()` method is used to return
+// an auto-generated value. `white` defines the output color
+// of all pixels below *threshold* and should be given as
+// an Array of three elements, such as `[255,255,255]`. `white` defaults
+// to this white value when unspecified. `black` defines the output color
+// of those above *threshold* and works pretty much like *white* in
+// its syntax.
+//
+// This routine returns the `CV` object with processed data.
 //
 CV.prototype.threshold = function( thres , white , black ){
 	if ( thres == null )
@@ -189,12 +209,14 @@ CV.prototype.threshold = function( thres , white , black ){
 		black = colors.black ;
 	}
 	/* we assume that the image is already in grayscale here. */
-	var i , j ,  len = this.imgData.data.length , imgData = this.imgData.data ;
+	var i , j ,
+		len = this.imgData.data.length , // the length of the imgData[]
+		 imgData = this.imgData.data ; 
 	for ( i = 0; i < len ; i += 4 ){
-		var sum = 0;
+		var sum = 0; //sum of three channels on this pixel
 		for ( j = 0 ; j < 3 ; ++ j )
-			sum += imgData[i+j] ; 
-		sum = Math.round( sum / 3 );
+			sum += imgData[i+j] ; //add R,G,B values
+		sum = Math.round( sum / 3 ); //compute arithmetic average
 		if ( sum >= thres )
 		{ /* set to white */
 			for ( j = 0; j<3; ++j )
@@ -205,7 +227,7 @@ CV.prototype.threshold = function( thres , white , black ){
 				imgData[ i+j ] = black[ j ] ;
 		}
 	}
-	if ( CVoptions.debug ){
+	if ( CVoptions.debug ){ //debug outputs
 		console.log( "threshold" );
 		console.log( this.imgData );
 	}
@@ -216,51 +238,77 @@ CV.prototype.threshold = function( thres , white , black ){
 //
 // ## Dilation
 //
+// This routine impelements the 
+// Dilation (<http://en.wikipedia.org/w/index.php?title=Dilation_(morphology)>).
+//
+// It takes in three parameters. `matrix` stands for the *structuring
+// matrix* that is given in the following format:
+//
+//      {
+//          h : 3 ,
+//          w : 3 ,
+//          data : [ 1,1,1 ,
+//					 1,1,1,
+//					 1,1,1 ]
+//       }
+//
+// where as `[floor(w/2),floor(h/2)]` is assumed to be the origin of this matrix.
+// `fit_color` defines the foreground color and is white `rgb(255,255,255)`
+// by default if omitted. `iteration` is the number of iterations to take
+// and has a default value of `1`
+//
+//
+// This routine returns the `CV` object processed.
 //
 CV.prototype.dilate = function( matrix , fit_color , iteration ){
 	if ( fit_color == null )
 		fit_color = colors.white;
 	if ( iteration == undefined || iteration < 1 )
 		iteration = 1;
-	var tmp=[];
-	var imgData = this.imgData.data;
-	var len = imgData.length;
-	var i , j , k , l;
-	var w = this.imgData.width , h = this.imgData.height;
-	var m_w = matrix.w , m_h = matrix.h;
-	var bdw = Math.floor( m_w / 2 );
-	var bdh = Math.floor( m_h / 2 );
-	function GETSUB( l , r ){
+	var tmp=[]; // buffer array to hold processed result during the process
+	var imgData = this.imgData.data; 
+	var len = imgData.length; //length of the buffer. len=_number_of_pixels*4
+	var i , j , k , l;	//loop variables
+	var w = this.imgData.width , 
+		h = this.imgData.height; //dimensions of the processed image
+	var m_w = matrix.w ,
+		m_h = matrix.h; //dimensions of the structuring matrix
+	var bdw = Math.floor( m_w / 2 ),
+		bdh = Math.floor( m_h / 2 ); //get offset of the origin ni the structuring matrix
+	function GETSUB( l , r ){ //helper function: get subscription in the large image
 		return l*w+r;
 	}
-	function GETMSUB( l , r ){
+	function GETMSUB( l , r ){ //helper function: get subscription in the structuring matrix
 		return l*m_w + r;
 	}
-	console.log( matrix );
-	while ( iteration -- > 0 ){
+	;//console.log( matrix );
+	while ( iteration -- > 0 ){ // iteration a number of times
 		;//init tmp[] image
 		for ( i = 0 ; i < len; ++i )
-			tmp[i] = 0;
+			tmp[i] = 0;		//init buffer array to black
 		for ( i = bdh ; i < h-bdh ; ++i )
-			for ( j = bdw ; j<w-bdw ; ++j ){
-				var cur_value = 0;
-				
+			for ( j = bdw ; j<w-bdw ; ++j ){//iterate through pixels on the processed image
+				var cur_value = 0;//a placeholder to do bitwise operations				
 				for ( k = 0; k < m_h ; ++k )
-					for ( l = 0 ; l < m_w ; ++l ){
+					for ( l = 0 ; l < m_w ; ++l ){//iterate through the matrix
 						if ( matrix.data[ GETMSUB( k , l ) ] ){
 							;//if pixel selected by brush
-							var tmp_color = ( ( imgData[ sub * 4 ] + imgData[ sub*4 + 1 ]
-											+ imgData[ sub * 4 + 2 ] ) / 3 ) > 128 ? 255 : 0;
+							var tmp_color = ( ( imgData[ sub * 4 ] +
+										imgData[ sub*4 + 1 ]
+										+ imgData[ sub * 4 + 2 ] ) / 3 )
+									 > 128 ? 255 : 0;/* generate a tmp_color, dirty fix
+									for the case when the input is not a thresholded image*/
 							;// threshold single pixel
 							var sub = GETSUB( i + k - bdh , j + l - bdw );
 							cur_value = cur_value ||
 								( tmp_color==fit_color[0] /*&&
 								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
-								  imgData[ sub * 4 + 2 ]==fit_color[2]*/ );
+								  imgData[ sub * 4 + 2 ]==fit_color[2]*/
+								 );
 							;//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
 						}
 					}
-				var sub = GETSUB( i  , j  );
+				var sub = GETSUB( i  , j  );//subscription of the larger (processed image)
 				tmp[ sub*4 ] = cur_value ? 255 : 0 ;//R
 				tmp[ sub*4 + 1 ] = cur_value ? 255 : 0 ;//G
 				tmp[ sub*4 + 2 ] = cur_value ? 255 : 0 ;//B
@@ -269,7 +317,7 @@ CV.prototype.dilate = function( matrix , fit_color , iteration ){
 				;//	console.log("#");;
 			}
 		for ( i = 0 ; i < len ; ++ i )
-			imgData[ i ] = tmp [ i ];
+			imgData[ i ] = tmp [ i ]; //copy back
 	}
 	return this;
 }
@@ -278,6 +326,12 @@ CV.prototype.dilate = function( matrix , fit_color , iteration ){
 //
 // ## Erosion
 //
+// This routine impelements the 
+// Erosion (<http://en.wikipedia.org/w/index.php?title=Erosion_(morphology)>).
+//
+// Parameters have the same meanings as in `dilate`.
+//
+// This routine returns the `CV` object.
 //
 CV.prototype.erode = function( matrix , fit_color , iteration){
 	if ( fit_color == null )
@@ -288,41 +342,47 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 	var imgData = this.imgData.data;
 	var len = imgData.length;
 	var i , j , k , l;
-	var w = this.imgData.width , h = this.imgData.height;
-	var m_w = matrix.w , m_h = matrix.h;
-	var bdw = Math.floor( m_w / 2 );
-	var bdh = Math.floor( m_h / 2 );
+	var w = this.imgData.width ,
+		h = this.imgData.height;
+	var m_w = matrix.w ,
+		m_h = matrix.h;
+	var bdw = Math.floor( m_w / 2 ),
+	    bdh = Math.floor( m_h / 2 );
 	function GETSUB( l , r ){
 		return l*w+r;
 	}
 	function GETMSUB( l , r ){
 		return l*m_w + r;
 	}
-	console.log( matrix );
+	;//console.log( matrix );
 	while ( iteration -- > 0 ){
 		;//init tmp[] image
 		for ( i = 0 ; i < len; ++i )
 			tmp[i] = 0;
 		for ( i = bdh ; i < h-bdh ; ++i )
-			for ( j = bdw ; j<w-bdw ; ++j ){
-				var cur_value = 1;
-				
+			for ( j = bdw ; j<w-bdw ; ++j ){ //iterate through pixels on the processed image
+				var cur_value = 1;//a placeholder to do bitwise operations				
 				for ( k = 0; k < m_h ; ++k )
-					for ( l = 0 ; l < m_w ; ++l ){
+					for ( l = 0 ; l < m_w ; ++l ){ //iterate through the matrix
 						if ( matrix.data[ GETMSUB( k , l ) ] ){
 							;//if pixel selected by brush
-							var tmp_color = ( ( imgData[ sub * 4 ] + imgData[ sub*4 + 1 ]
-											+ imgData[ sub * 4 + 2 ] ) / 3 ) > 128 ? 255 : 0;
+							var tmp_color = ( ( imgData[ sub * 4 ] +
+											imgData[ sub*4 + 1 ]
+											+ imgData[ sub * 4 + 2 ] )
+											/ 3 )
+										> 128 ? 255 : 0; /* generate a tmp_color, dirty fix
+									for the case when the input is not a thresholded image*/
 							;// threshold single pixel
-							var sub = GETSUB( i + k - bdh , j + l - bdw );
+							var sub = GETSUB( i + k - bdh , j + l - bdw );//get subscription
 							cur_value = cur_value &&
 								( tmp_color==fit_color[0] /*&&
 								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
-								  imgData[ sub * 4 + 2 ]==fit_color[2]*/ );
-							;//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
+								  imgData[ sub * 4 + 2 ]==fit_color[2]*/
+							 );
+						;//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
 						}
 					}
-				var sub = GETSUB( i  , j  );
+				var sub = GETSUB( i  , j  );	//subscription of the larger (processed image)
 				tmp[ sub*4 ] = cur_value ? 255 : 0 ;//R
 				tmp[ sub*4 + 1 ] = cur_value ? 255 : 0 ;//G
 				tmp[ sub*4 + 2 ] = cur_value ? 255 : 0 ;//B
@@ -331,7 +391,7 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 				;//	console.log("#");;
 			}
 		for ( i = 0 ; i < len ; ++ i )
-			imgData[ i ] = tmp [ i ];
+			imgData[ i ] = tmp [ i ]; //copy back 
 	}
 	return this;
 }

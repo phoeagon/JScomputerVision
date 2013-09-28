@@ -26,10 +26,10 @@ function updateImg(){
 //
 function loadImg(){
 	function fitDimensions(){
-		imgParam = getOriginalImageDimension( $('#imgLoad')[0] )
+		;//imgParam = getOriginalImageDimension( $('#imgLoad')[0] )
 		;// DEPRECATED: because this gets the 'resized' dimension of the image
-		;//imgParam.width = $('#imgLoad')[0].width
-		;//imgParam.height = $('#imgLoad')[0].height
+		imgParam.width = $('#imgLoad')[0].width
+		imgParam.height = $('#imgLoad')[0].height
 		
 		$('#myCanvas').attr('width' , imgParam.width );
 		$('#myCanvas').attr('height' ,imgParam.height );
@@ -40,7 +40,7 @@ function loadImg(){
 	var img=$("#imgLoad")[0];
 	fitDimensions();
 
-	ctx.drawImage(img,0,0);
+	ctx.drawImage(img,0,0,imgParam.width,imgParam.height);
 	updateImg();
 }
 //
