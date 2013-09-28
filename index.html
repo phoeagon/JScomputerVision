@@ -3,7 +3,8 @@
 	Assignment for Computer Vision
 	-----------------
 	by Qiu Zhe
-	This project uses jQuery for interactive purposes.
+	This project uses jQuery, flot w/ jquery,
+	bootstrap for interactive purposes & presentation.
 /-->
 <html>
 <head>
@@ -13,8 +14,13 @@
 .fullpagecol{
 	height: 100%;
 }
+#placeholder{
+      width:100%;
+      height:200px;
+}
 </style>
 	<script type="text/javascript" src="./extern/jq.js"></script>
+	<script type="text/javascript" src="./extern/jq.flot.js"></script>
 	<script type="text/javascript" src="./js/cv.js"></script>
 	<script type="text/javascript" src="./js/brush.js"></script>
 </head>
@@ -26,6 +32,9 @@
 	<div class="span3 fullpagecol">
 	<p>Image to use:</p>
 	<img id="imgLoad" src="./img/test.png" alt="The Scream">
+	<div class="demo-container">
+			<div id="placeholder" class="demo-placeholder"></div>
+		</div>
 	</div>
 	
 	<div class="span5 fullpagecol" id='canvas_col'>
@@ -59,7 +68,7 @@
 		<br/>
 		<a href="#" id="grayscaleImg" class='btn'>To Grayscale</a>
 		<a href="#" id="savedImg" class='btn'>Save Image</a><br/>
-		<a href="#" id="reloadImg" class='btn'>Reload Image</a>
+		<a href="#" id="reloadImg" class='btn'>Left to Right</a>
 		<a href="#" id="switchImg" class='btn'>Right to Left</a><br/>
 	</div>
 </div>

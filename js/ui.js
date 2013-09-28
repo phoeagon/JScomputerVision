@@ -16,10 +16,22 @@ var imgParam = {
 }
 //
 //------------------------------------------------------------
-// 
+//
+function drawHist(){
+	var hist = ImageCV.histogram( true );
+	var data = [];
+	for ( var i=0; i < 256; ++i )
+		data.push( [ i , hist[i] ] );
+	console.log( data );
+	$.plot("#placeholder", [ { 
+			bars: { show: true } ,
+			data : data
+			} ] );
+}
 function updateImg(){
 	window.ImageCV = new CV( getImageData() );	//write to global variable
-	$('#thresv').val( ImageCV.otsu() )
+	$('#thresv').val( ImageCV.otsu() );
+	drawHist();
 }
 //
 //-------------------------------
