@@ -140,3 +140,21 @@ $('#thresholdImg').click( function(){
 $('#reloadImg').click( function(){
 	loadImg();
 })
+$('#erodebtn').click( function(){
+	var radius = $('#radius').val();
+	if ( $('input[name=brush]:checked', '#myForm').val()=='rect' ){
+		var b = brush.rect( radius * 2 + 1 );
+	}else
+		var b = brush.circle( radius );
+	var ImageCV = new CV( getImageData() );
+	canvasContext.putImageData( ImageCV.erode( b ).getImgData() , 0 , 0 );
+})
+$('#dilatebtn').click( function(){
+	var radius = $('#radius').val();
+	if ( $('input[name=brush]:checked', '#myForm').val()=='rect' ){
+		var b = brush.rect( radius * 2 + 1 );
+	}else
+		var b = brush.circle( radius );
+	var ImageCV = new CV( getImageData() );
+	canvasContext.putImageData( ImageCV.dilate( b ).getImgData() , 0 , 0 );
+})
