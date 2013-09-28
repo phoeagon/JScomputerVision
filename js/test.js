@@ -29,3 +29,24 @@ function testGrayscale(){
 //
 //------------------------------------------------------------
 //
+function testErode(){
+	var T = new CV( getImageData() );
+	var b = new Object( brush.rect( 3 , 3 ) );
+	var dt = T.erode( b , [255,255,255]  ).getImgData();
+	console.log( dt );
+	canvasContext.putImageData( 
+		 dt ,
+		0 , 0 )
+}
+//
+//------------------------------------------------------------
+//
+function testDilate(){
+	var T = new CV( getImageData() );
+	var b = new Object( brush.rect( 3 , 3 ) );
+	var dt = T.dilate( b , [255,255,255]  ).getImgData();
+	console.log( dt );
+	canvasContext.putImageData( 
+		 dt ,
+		0 , 0 )
+}

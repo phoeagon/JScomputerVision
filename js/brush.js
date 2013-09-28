@@ -5,45 +5,45 @@
 //
 //---------------------------------
 //
-var brushGenerator = {};
+var brush = {};
 //
 //----------------------------------
 //
-brushGenerator.generateRect = function( w , h ){
+brush.rect = function( w , h ){
     var matrix = [];
-    matrix[ w * h ] = undefined;
-    for ( var i in matrix )
+    matrix[ w * h - 1 ] = undefined;
+    for ( i=0; i < w*h ; ++i )
         matrix[i] = 1;
     return {
         w : w ,
         h : h ,
-        matrix : matrix
+        data : matrix
     }
 }
 //
 //----------------------------------
 //
-brushGenerator.generateCircle = function( r ){
+brush.circle = function( r ){
     var matrix = [];
-    matrix[ r*r ] = undefined;
-    for (var i=0;i<2*r;++i)
-        for ( var j = 0 ; j < 2*r; ++ j ){
+    matrix[ (2*r+1)*(2*r+1)-1 ] = undefined;
+    for (var i=0;i<2*r+1;++i)
+        for ( var j = 0 ; j < 2*r+1; ++ j ){
             var da = (i-r)*(i-r);
             var db = (j-r)*(j-r);
             if ( da + db <= r )
-                matrix[ 2*r*j + i ] = 1;
-            else matrix[ 2*r*j + i ] = 0;
+                matrix[ (2*r+1)*j + i ] = 1;
+            else matrix[ (2*r+1)*j + i ] = 0;
         }
     return {
-            w : 2*r ,
-            h : 2*r ,
-            matrix : matrix
+            w : 2*r+1 ,
+            h : 2*r+1 ,
+            data : matrix
         }
 }
 //
 //-----------------------------------------
 //
-brushGenerator.generateEclipse = function( r ){
+brush.eclipse = function( r ){
     //TODO
     return null;
 }

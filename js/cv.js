@@ -217,7 +217,60 @@ CV.prototype.threshold = function( thres , white , black ){
 // ## Dilation
 //
 //
-CV.prototype.dilate = function( matrix ){
+CV.prototype.dilate = function( matrix , fit_color , iteration ){
+	if ( fit_color == null )
+		fit_color = colors.white;
+	if ( iteration == undefined || iteration < 1 )
+		iteration = 1;
+	var tmp=[];
+	var imgData = this.imgData.data;
+	var len = imgData.length;
+	var i , j , k , l;
+	var w = this.imgData.width , h = this.imgData.height;
+	var m_w = matrix.w , m_h = matrix.h;
+	var bdw = Math.floor( m_w / 2 );
+	var bdh = Math.floor( m_h / 2 );
+	function GETSUB( l , r ){
+		return l*w+r;
+	}
+	function GETMSUB( l , r ){
+		return l*m_w + r;
+	}
+	console.log( matrix );
+	while ( iteration -- > 0 ){
+		;//init tmp[] image
+		for ( i = 0 ; i < len; ++i )
+			tmp[i] = 0;
+		for ( i = bdh ; i < h-bdh ; ++i )
+			for ( j = bdw ; j<w-bdw ; ++j ){
+				var cur_value = 0;
+				
+				for ( k = 0; k < m_h ; ++k )
+					for ( l = 0 ; l < m_w ; ++l ){
+						if ( matrix.data[ GETMSUB( k , l ) ] ){
+							;//if pixel selected by brush
+							var tmp_color = ( ( imgData[ sub * 4 ] + imgData[ sub*4 + 1 ]
+											+ imgData[ sub * 4 + 2 ] ) / 3 ) > 128 ? 255 : 0;
+							;// threshold single pixel
+							var sub = GETSUB( i + k - bdh , j + l - bdw );
+							cur_value = cur_value ||
+								( tmp_color==fit_color[0] /*&&
+								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
+								  imgData[ sub * 4 + 2 ]==fit_color[2]*/ );
+							//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
+						}
+					}
+				var sub = GETSUB( i  , j  );
+				tmp[ sub*4 ] = cur_value ? 255 : 0 ;//R
+				tmp[ sub*4 + 1 ] = cur_value ? 255 : 0 ;//G
+				tmp[ sub*4 + 2 ] = cur_value ? 255 : 0 ;//B
+				tmp[ sub*4 + 3 ] = imgData[ sub*4 + 3 ];//A
+				//if ( imgData[ sub*4 ] !== tmp[ sub*4 ]  )
+				//	console.log("#");;
+			}
+		for ( i = 0 ; i < len ; ++ i )
+			imgData[ i ] = tmp [ i ];
+	}
 	return this;
 }
 //
@@ -226,6 +279,59 @@ CV.prototype.dilate = function( matrix ){
 // ## Erosion
 //
 //
-CV.prototype.erose = function( matrix ){
+CV.prototype.erode = function( matrix , fit_color , iteration){
+	if ( fit_color == null )
+		fit_color = colors.white;
+	if ( iteration == undefined || iteration < 1 )
+		iteration = 1;
+	var tmp=[];
+	var imgData = this.imgData.data;
+	var len = imgData.length;
+	var i , j , k , l;
+	var w = this.imgData.width , h = this.imgData.height;
+	var m_w = matrix.w , m_h = matrix.h;
+	var bdw = Math.floor( m_w / 2 );
+	var bdh = Math.floor( m_h / 2 );
+	function GETSUB( l , r ){
+		return l*w+r;
+	}
+	function GETMSUB( l , r ){
+		return l*m_w + r;
+	}
+	console.log( matrix );
+	while ( iteration -- > 0 ){
+		;//init tmp[] image
+		for ( i = 0 ; i < len; ++i )
+			tmp[i] = 0;
+		for ( i = bdh ; i < h-bdh ; ++i )
+			for ( j = bdw ; j<w-bdw ; ++j ){
+				var cur_value = 1;
+				
+				for ( k = 0; k < m_h ; ++k )
+					for ( l = 0 ; l < m_w ; ++l ){
+						if ( matrix.data[ GETMSUB( k , l ) ] ){
+							;//if pixel selected by brush
+							var tmp_color = ( ( imgData[ sub * 4 ] + imgData[ sub*4 + 1 ]
+											+ imgData[ sub * 4 + 2 ] ) / 3 ) > 128 ? 255 : 0;
+							;// threshold single pixel
+							var sub = GETSUB( i + k - bdh , j + l - bdw );
+							cur_value = cur_value &&
+								( tmp_color==fit_color[0] /*&&
+								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
+								  imgData[ sub * 4 + 2 ]==fit_color[2]*/ );
+							//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
+						}
+					}
+				var sub = GETSUB( i  , j  );
+				tmp[ sub*4 ] = cur_value ? 255 : 0 ;//R
+				tmp[ sub*4 + 1 ] = cur_value ? 255 : 0 ;//G
+				tmp[ sub*4 + 2 ] = cur_value ? 255 : 0 ;//B
+				tmp[ sub*4 + 3 ] = imgData[ sub*4 + 3 ];//A
+				//if ( imgData[ sub*4 ] !== tmp[ sub*4 ]  )
+				//	console.log("#");;
+			}
+		for ( i = 0 ; i < len ; ++ i )
+			imgData[ i ] = tmp [ i ];
+	}
 	return this;
 }
