@@ -18,6 +18,9 @@
       width:100%;
       height:200px;
 }
+.halfwid{
+	width:40%;
+}
 </style>
 	<script type="text/javascript" src="./extern/jq.js"></script>
 	<script type="text/javascript" src="./extern/jq.flot.js"></script>
@@ -52,8 +55,8 @@
 		</div>
 		<hr/>
 		<div>
-		<a href="#" id="auto_thresholdImg" class='btn'>Auto-Threshold</a><br/>
-			Threshold: <input type='number' min='0' max='255' id="thresv" style='width:50%;'/><br/>
+		<a href="#" id="auto_thresholdImg" class='btn' style='width:90%;'>Otsu-Threshold</a><br/>
+			Threshold: <input type='number' min='0' max='255' id="thresv" style='width:30%;'/>
 		<a href="#" id="thresholdImg" class='btn'>Threshold</a><br/>
 		</div>
 		<hr/>
@@ -61,15 +64,16 @@
 			Radius:<input type='number' min='0' max='10' id="radius" value='1'/><br/>
 			<input type="radio" name="brush" value="Square" checked> Square &nbsp;
 			<input type="radio" name="brush" value="Circle">Circle <br/>
-			<button id='erodebtn' class='btn'>Erode</button>
-			<button id='dilatebtn' class='btn'>Dilate</button>
+			<button id='erodebtn' class='btn' style='width:45%;'>Erode</button>
+			<button id='dilatebtn' class='btn' style='width:45%;'>Dilate</button>
 		</div>
 		<hr/>
 		<br/>
-		<a href="#" id="grayscaleImg" class='btn'>To Grayscale</a>
-		<a href="#" id="savedImg" class='btn'>Save Image</a><br/>
-		<a href="#" id="reloadImg" class='btn'>Left to Right</a>
-		<a href="#" id="switchImg" class='btn'>Right to Left</a><br/>
+		<a href="#" id="grayscaleImg" class='btn halfwid'>To Grayscale</a>
+		<a href="#" id="savedImg" class='btn halfwid'>Save Image</a>
+		<br/>
+		<a href="#" id="reloadImg" class='btn halfwid'>Left to Right</a>
+		<a href="#" id="switchImg" class='btn halfwid'>Right to Left</a><br/>
 	</div>
 </div>
 </div>
