@@ -42,12 +42,19 @@ function loadImg(){
 		;// DEPRECATED: because this gets the 'resized' dimension of the image
 		;//imgParam.width = $('#imgLoad')[0].width
 		;//imgParam.height = $('#imgLoad')[0].height
-		if ( $('#canvas_col').width() < imgParam.width ){
-			imgParam.width = $('#canvas_col').width();
-			imgParam.height = $('#imgLoad').height() *
-					( imgParam.width / $('#imgLoad').width() )
+		if ( $('#fullImg').is(':checked') ){
+			var target_width = $('#canvas_col').width();
+			var ratio = target_width / imgParam.width ;
+			$('#myCanvas').css('zoom',ratio);//scale to fit
 		}
-		
+		else{ //preview image
+			$('#myCanvas').css('transform','');//reset transform
+			if ( $('#canvas_col').width() < imgParam.width ){
+				imgParam.width = $('#canvas_col').width();
+				imgParam.height = $('#imgLoad').height() *
+						( imgParam.width / $('#imgLoad').width() )
+			}
+		}
 		$('#myCanvas').attr('width' , imgParam.width );
 		$('#myCanvas').attr('height' ,imgParam.height );
 	}
