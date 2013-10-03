@@ -5,4 +5,5 @@ run:
 
 doc: docs
 	
-	
+handin: *
+	tar zcf handin.tar.gz *

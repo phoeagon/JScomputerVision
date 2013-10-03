@@ -1,1 +1,20 @@
-an assignment for Computer Vision
+An assignment for Computer Vision
+===========================================
+
+Qiu Zhe
+
+## Quick Start
+Open a browser and go to `index.html`.
+
+The browser should be HTML5 capable to run this demo.
+
+
+## Documentation
+Documentations are located under `./docs/`. Currently
+only the main `cv.js` library is intensively documented.
+
+If such directory doesn't exists, do a
+
+      make docs
+
+
