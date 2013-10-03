@@ -80,7 +80,14 @@
 </div>
 <script type="text/javascript" src="./js/ui.js"></script>
 <script type="text/javascript" src="./js/test.js"></script>
-
+<script type="text/javascript">
+	var url=location.href;
+	if ( url.indexOf("file:")!== -1 )
+		alert("You are running this demo on the local disk! \n"
+			+ "This may break this demo due to the single-domain restriction"
+			+ " enforced on Firefox/Chrome."+"\n"+
+			"Please upload this to your server and try again!");
+</script>
 </body>
 </html>
 

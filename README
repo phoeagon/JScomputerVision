@@ -4,10 +4,17 @@ An assignment for Computer Vision
 Qiu Zhe
 
 ## Quick Start
+
+Upload the whole directory to some webserver.
+
 Open a browser and go to `index.html`.
 
 The browser should be HTML5 capable to run this demo.
 
+## Known issues
+
+Chrome/Firefox would not run this demo locally due to same-domain
+restriction. Please upload to your personal webserver.
 
 ## Documentation
 Documentations are located under `./docs/`. Currently
