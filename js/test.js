@@ -68,3 +68,8 @@ function testDilate(){
 		 dt ,
 		0 , 0 ) // draw image back to canvas
 }
+
+function potato(){//WTF!
+	var T = new CV( getImageData() );
+	
+}
