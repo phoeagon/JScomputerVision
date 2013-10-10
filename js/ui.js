@@ -22,7 +22,7 @@ function drawHist(){
 	var data = [];
 	for ( var i=0; i < 256; ++i )
 		data.push( [ i , hist[i] ] );
-	console.log( data );
+	//console.log( data );
 	$.plot("#placeholder", [ { 
 			bars: { show: true } ,
 			data : data
@@ -40,8 +40,8 @@ function loadImg(){
 	function fitDimensions(){
 		imgParam = getOriginalImageDimension( $('#imgLoad')[0] )
 		;// DEPRECATED: because this gets the 'resized' dimension of the image
-		;//imgParam.width = $('#imgLoad')[0].width
-		;//imgParam.height = $('#imgLoad')[0].height
+		imgParam.width = $('#imgLoad')[0].width
+		imgParam.height = $('#imgLoad')[0].height
 		if ( $('#fullImg').is(':checked') ){
 			var target_width = $('#canvas_col').width();
 			var ratio = target_width / imgParam.width ;
@@ -161,7 +161,7 @@ $('#reloadImg').click( function(){
 })
 $('#erodebtn').click( function(){
 	var radius = $('#radius').val();
-	if ( $('input[name=brush]:checked', '#myForm').val()=='rect' ){
+	if ( $('input[name=brush]:checked').val()=='Square' ){
 		var b = brush.rect( radius * 2 + 1 , radius * 2 + 1 );
 	}else
 		var b = brush.circle( radius );
@@ -170,7 +170,7 @@ $('#erodebtn').click( function(){
 })
 $('#dilatebtn').click( function(){
 	var radius = $('#radius').val();
-	if ( $('input[name=brush]:checked', '#myForm').val()=='rect' ){
+	if ( $('input[name=brush]:checked').val()=='Square' ){
 		var b = brush.rect( radius * 2 + 1, radius * 2 + 1 );
 	}else
 		var b = brush.circle( radius );
@@ -179,7 +179,7 @@ $('#dilatebtn').click( function(){
 })
 $('#viewBrush').click( function(){
 	var radius = $('#radius').val();
-	if ( $('input[name=brush]:checked', '#myForm').val()=='rect' ){
+	if ( $('input[name=brush]:checked').val()=='Square' ){
 		var b = brush.rect( radius * 2 + 1, radius * 2 + 1 );
 	}else
 		var b = brush.circle( radius );
@@ -189,8 +189,8 @@ function viewBrush( br ){
 	var t = '' ;
 	for ( var i in br.data ){
 		t = t + ' ' + br.data[i] ; 
-		if ( parseInt(i) % br.w == 0 && i )
-			t = '<br/>'
+		if ( ((parseInt(i)+1) % br.w == 0)  )
+			t += '<br/>'
 	}
 	window.open().document.write(t);
 }

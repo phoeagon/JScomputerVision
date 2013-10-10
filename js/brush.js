@@ -30,7 +30,7 @@ brush.circle = function( r ){
         for ( var j = 0 ; j < 2*r+1; ++ j ){
             var da = (i-r)*(i-r);
             var db = (j-r)*(j-r);
-            if ( da + db <= r )
+            if ( Math.round(Math.sqrt(da + db)) <= r )
                 matrix[ (2*r+1)*j + i ] = 1;
             else matrix[ (2*r+1)*j + i ] = 0;
         }
