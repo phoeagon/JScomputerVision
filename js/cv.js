@@ -550,35 +550,54 @@ CV.prototype.hitormiss = function( b1 , b2 ){
 //
 //------------------------------------------------------------
 //
-CV.prototype.thin = function( b1 , b2 ){
+CV.prototype.thin = function( b1 , b2 , c1 , c2 ){
 	if ( b1 == null )
-		var b1 = brush.homothin( 1 );
+		var b1 = brush.thinfg();
 	if ( b2==null )
-		var b2 = brush.invert( b1 )
+		var b2 = brush.thinbg();
+	if ( c1==null )
+		var c1 = brush.octagonalfg();
+	if ( c2==null )
+		var c2 = brush.octagonalbg()
 		//var b2 = brush.homobox( 1 )
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
 		this.diff( T.hitormiss( b1 , b2 ) );
 		b1 = brush.rot90( b1 ) ;
 		b2 = brush.rot90( b2 ) ;
+		
+		var T = this.clone( );
+		this.diff( T.hitormiss( c1 , c2 ) );
+		c1 = brush.rot90( c1 ) ;
+		c2 = brush.rot90( c2 ) ;
 	}
 	return this ;
 }
 //
 //------------------------------------------------------------
 //
-CV.prototype.thick = function( b1 , b2 ){
+CV.prototype.thick = function( b1 , b2 , c1 , c2 ){
 	if ( b1 == null )
-		var b1 = brush.homothin( 1 );
+		var b1 = brush.thinfg();
 	if ( b2==null )
-		var b2 = brush.homobox( 1 ) ;
+		var b2 = brush.thinbg();
+	if ( c1==null )
+		var c1 = brush.octagonalfg();
+	if ( c2==null )
+		var c2 = brush.octagonalbg()
+		//var b2 = brush.homobox( 1 )
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
-		this.union( T.hitormiss( b1 , b2  ) );
+		this.union( T.hitormiss( b1 , b2 ) );
 		b1 = brush.rot90( b1 ) ;
 		b2 = brush.rot90( b2 ) ;
+		
+		var T = this.clone( );
+		this.union( T.hitormiss( c1 , c2 ) );
+		c1 = brush.rot90( c1 ) ;
+		c2 = brush.rot90( c2 ) ;
 	}
-	return this;
+	return this ;
 }
 //
 //-------------------------------------------

@@ -62,36 +62,51 @@ brush.cross = function( r ){
 //
 //-----------------------------------------
 //
-brush.homothin = function( r ){
-    var matrix = [];
-    matrix[ (2*r+1)*(2*r+1)-1 ] = undefined;
-    for (var i=0;i<2*r+1;++i)
-        for ( var j = 0 ; j < 2*r+1; ++ j ){
-			if (( i==r || !j ) && j <= r )
-				matrix[ (2*r+1)*j + i ] = 1 ;
-			else 
-				matrix[ (2*r+1)*j + i ] = 0 ;
-        }
+brush.octagonalfg = function(){
     return {
-            w : 2*r+1 ,
-            h : 2*r+1 ,
-            data : matrix
+            w : 3 ,
+            h : 3 ,
+            data : [ 
+				0,1,0,
+				1,1,0,
+				0,0,0
+			]
         }
 }
-brush.homobox = function( r ){
-    var matrix = [];
-    matrix[ (2*r+1)*(2*r+1)-1 ] = undefined;
-    for (var i=0;i<2*r+1;++i)
-        for ( var j = 0 ; j < 2*r+1; ++ j ){
-			if ( i<= r && j<=r )
-				matrix[ (2*r+1)*j + i ] = 1 ;
-			else 
-				matrix[ (2*r+1)*j + i ] = 0 ;
-        }
+brush.octagonalbg = function(){
     return {
-            w : 2*r+1 ,
-            h : 2*r+1 ,
-            data : matrix
+            w : 3 ,
+            h : 3 ,
+            data : [ 
+				0,0,0,
+				0,0,1,
+				0,1,1
+			]
+        }
+}
+//
+//-----------------------------------------
+//
+brush.thinfg = function(){
+    return {
+            w : 3 ,
+            h : 3 ,
+            data : [ 
+				0,0,0,
+				0,1,0,
+				1,1,1
+			]
+        }
+}
+brush.thinbg = function(){
+    return {
+            w : 3 ,
+            h : 3 ,
+            data : [ 
+				1,1,1,
+				0,0,0,
+				0,0,0
+			]
         }
 }
 //--------------------------------------------
@@ -112,7 +127,7 @@ brush.rot90 = function( br ){
 	var buffer = {};
 	for ( var  i = 0 ; i < b ; ++ i )
 		for ( var j = 0 ; j < a ; ++ j ) 
-			buffer[ (br.h)*j+(br.w-i) ] = br.data[ (br.w)*i + j ];
+			buffer[ (br.h)*j+(br.w-i-1) ] = br.data[ (br.w)*i + j ];
 	// copy back
 	for ( var i in buffer )
 		br.data[i] = buffer[i] ;
