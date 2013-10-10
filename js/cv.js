@@ -44,7 +44,13 @@ CVoptions = {
 // This routine returns the `CV` object constructed.
 //
 function CV ( imgData ){
-	this.imgData = imgData;
+	if ( imgData.cv_js ){ // if making a clone
+		this.imgData = imgData.imgData;
+		this.cv_js = true ; // marker
+	}else{
+		this.imgData = imgData;
+		this.cv_js = true ; // marker
+	}
 }
 
 //
@@ -395,3 +401,203 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 	}
 	return this;
 }
+//
+//------------------------------------------------------------
+//
+// ## Open
+//
+// This routine impelements the Open.
+//
+// Parameters have the same meanings as in `dilate`.
+//
+// This routine returns the `CV` object.
+//
+CV.prototype.open = function( matrix , fit_color , iteration){
+	return this.erode( matrix , fit_color , iteration )
+				.dilate( matrix , fit_color , iteration );
+}
+//
+//------------------------------------------------------------
+//
+// ## Close
+//
+// This routine impelements the Close.
+//
+// Parameters have the same meanings as in `dilate`.
+//
+// This routine returns the `CV` object.
+//
+CV.prototype.close = function( matrix , fit_color , iteration){
+	return this.dilate( matrix , fit_color , iteration )
+				.erode( matrix , fit_color , iteration );
+}
+//
+//------------------------------------------------------------
+//
+// ## Boundary
+//
+// This routine impelements the boundary.
+//
+// Parameters have the same meanings as in `dilate`,
+// except for a lack of `iterations` parameter.
+//
+// This routine returns the `CV` object.
+//
+CV.prototype.boundary = function( matrix , fit_color ){
+	var imgDataBackup = clone( this.getImgData() );
+	this.erode( matrix , fit_color );
+	for ( var i in this.imgData.data ){
+	if ( parseInt(i) % 4 != 3 )//skip alpha{
+		this.imgData.data[i] = imgDataBackup[i] - 
+				this.imgData.data[i];
+	}
+	return this;
+}
+//
+//------------------------------------------------------------
+//
+// ## Pixel-wise Operation
+//
+//
+CV.prototype.pixwiseOp = function( obj , op ){
+	if ( obj.cv_js ) //if another CV instance
+		var imgData = obj.imgData ; 
+	else 
+		var imgData = obj ; //assume ImageData
+	if ( imgData.width != this.imgData.width ||
+		 imgData.height != this.imgData.height ){
+		// TODO : auto scale
+		alert("Dimensions not fit");
+		console.log("Dimensions not fit");
+		return this;
+	}
+	for ( var i in imgData.data )
+	if ( parseInt(i) % 4 != 3 )//skip alpha
+		this.imgData.data[i] = op ( this.imgData.data[i] , 
+								imgData.data[i] );
+	return this ;
+}
+//
+//------------------------------------------------------------
+//
+// ## Pixel-wise Operation
+//
+//
+CV.prototype.pixwiseOp = function( obj , op ){
+	if ( obj.cv_js ) //if another CV instance
+		var imgD = obj.imgData ; 
+	else 
+		var imgD = obj ; //assume ImageData
+	if ( imgD.width != this.imgData.width ||
+		 imgD.height != this.imgData.height ){
+		// TODO : auto scale
+		alert("Dimensions not fit");
+		console.log("Dimensions not fit");
+		return this;
+	}
+	for ( var i in imgData.data )
+	if ( parseInt(i) % 4 != 3 )//skip alpha
+		this.imgData.data[i] = op ( this.imgData.data[i] , 
+								imgD.data[i] );
+	return this ;
+}
+//
+//------------------------------------------------------------
+//
+// ## Map Operation
+//
+//
+CV.prototype.map = function( op ){
+	var dt = this.imgData.data ; 
+	for ( var i = 0 ; i < this.imgData.data.length ; i += 4 ){
+		var T = op([ dt[i] , dt[i+1] , dt[i+2] , dt[i+3] ]);//rgba
+		dt[i] = T[0] ; 
+		dt[i+1] = T[1] ; 
+		dt[i+2] = T[2] ;
+		dt[i+3] = T[3];
+	}
+	return this ;
+}
+//
+//------------------------------------------------------------
+//
+// ## Union
+//
+//
+CV.prototype.union = function( obj ){
+	return this.pixwiseOp( obj , Math.max );
+}
+//
+//------------------------------------------------------------
+//
+// ## Invert
+//
+//
+CV.prototype.invert = function(){
+	function inv( arr ){
+		arr[0] = -arr[0];
+		arr[1] = -arr[1];
+		arr[2] = -arr[2] ;
+		arr[3] ;  //skip alpha
+		return arr;
+	}
+	return this.map( inv );
+}
+//
+//------------------------------------------------------------
+//
+// ## Intersect
+//
+//
+CV.prototype.intersect = function( obj ){
+	return this.pixwiseOp( obj , Math.min );
+}
+//
+//------------------------------------------------------------
+//
+// ## Diff
+//
+//
+CV.prototype.diff = function( obj ){
+	function minus( a , b ) { return a - b } 
+	return this.pixwiseOp( obj , minus );
+}
+//
+//------------------------------------------------------------
+//
+// ## Hit-or-miss
+//
+//
+CV.prototype.hitormiss = function( b1 , b2 ){
+	var T = clone( this ) ;
+	if ( b2==null )
+		b2 = b1 ; 
+	T.invert().erode( b2 ) ;
+	this.erode( b1 );
+	return this.intersect( T );
+}
+//
+//------------------------------------------------------------
+//
+//
+// ## Helper function
+// 
+//
+function structuredClone(obj) {
+	if ( history.replaceState == undefined )
+		return null;
+    var oldState = history.state;
+    history.replaceState(obj);
+    var clonedObj = history.state;
+    history.replaceState(oldState);
+    return clonedObj;
+}
+function clone( obj ){
+	if ( $ ){ //jquery available
+		return $.extend( {} , obj ) ;
+	}else return
+		new CV( this ); 
+}
+//
+// ------------------------------------------------------------
+//
