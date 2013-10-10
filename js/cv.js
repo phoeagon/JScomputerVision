@@ -44,7 +44,7 @@ CVoptions = {
 // This routine returns the `CV` object constructed.
 //
 function CV ( imgData ){
-	if ( imgData.cv_js ){ // if making a clone
+	if ( imgData && imgData.cv_js ){ // if making a clone
 		this.imgData = imgData.imgData;
 		this.cv_js = true ; // marker
 	}else{
@@ -444,14 +444,8 @@ CV.prototype.close = function( matrix , fit_color , iteration){
 // This routine returns the `CV` object.
 //
 CV.prototype.boundary = function( matrix , fit_color ){
-	var imgDataBackup = clone( this.getImgData() );
-	this.erode( matrix , fit_color );
-	for ( var i in this.imgData.data ){
-	if ( parseInt(i) % 4 != 3 )//skip alpha{
-		this.imgData.data[i] = imgDataBackup[i] - 
-				this.imgData.data[i];
-	}
-	return this;
+	var T = this.clone( );
+	return this.diff( T.erode( matrix , fit_color ) );
 }
 //
 //------------------------------------------------------------
@@ -569,9 +563,9 @@ CV.prototype.diff = function( obj ){
 //
 //
 CV.prototype.hitormiss = function( b1 , b2 ){
-	var T = clone( this ) ;
+	var T = this.clone( ) ;
 	if ( b2==null )
-		b2 = b1 ; 
+		b2 = brush.neg( b1 ); 
 	T.invert().erode( b2 ) ;
 	this.erode( b1 );
 	return this.intersect( T );
@@ -579,25 +573,46 @@ CV.prototype.hitormiss = function( b1 , b2 ){
 //
 //------------------------------------------------------------
 //
-//
-// ## Helper function
-// 
-//
-function structuredClone(obj) {
-	if ( history.replaceState == undefined )
-		return null;
-    var oldState = history.state;
-    history.replaceState(obj);
-    var clonedObj = history.state;
-    history.replaceState(oldState);
-    return clonedObj;
+CV.prototype.thin = function(){
+	var b = brush.rect(3,3) ;
+	for ( var i = 0 ; i < 4 ; ++ i ){
+		var T = this.clone( );
+		//this.diff( T.hitormiss( b1 , ) );
+		b.rot90() ;
+	}
 }
-function clone( obj ){
-	if ( $ ){ //jquery available
-		return $.extend( {} , obj ) ;
-	}else return
-		new CV( this ); 
+
+CV.prototype.clone = function(){
+	return new CV( this );
 }
 //
 // ------------------------------------------------------------
 //
+
+CV.prototype.fromBrush = function ( br ){
+	this.imgData = {} ;
+	this.imgData.data = [];
+	this.imgData.width = br.w ;
+	this.imgData.height = br.h ;
+	for ( var i in br.data ){
+		var ii = parseInt( i );
+		for ( var j = 0 ; j < 3; ++ j )//copy to all 3 channels
+			this.imgData.data[ ii*4 + j ] = br.data[ ii ] ? 255 : 0;
+		this.imgData.data[ ii*4+3 ] = 255 ; //alpha
+	}
+	
+	return this ;
+}
+CV.prototype.toBrush = function(){
+	var T = {
+		w : this.imgData.width , 
+		h : this.imgData.height ,
+		data : []
+	}
+	for ( var i = 0 ; i < this.imgData.data.length ; i += 4){
+		T.data[ i / 4 ] = ( ( this.imgData.data[i] + 
+				this.imgData.data[i+1] + this.imgData.data[i+2] ) / 3 )
+					> 127 ? 1 : 0 ;
+	}
+	return T ;
+}
