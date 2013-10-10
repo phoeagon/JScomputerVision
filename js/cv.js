@@ -505,9 +505,9 @@ CV.prototype.union = function( obj ){
 //
 CV.prototype.invert = function(){
 	function inv( arr ){
-		arr[0] = -arr[0];
-		arr[1] = -arr[1];
-		arr[2] = -arr[2] ;
+		arr[0] = 255-arr[0];
+		arr[1] = 255-arr[1];
+		arr[2] = 255-arr[2] ;
 		arr[3] ;  //skip alpha
 		return arr;
 	}
@@ -559,6 +559,7 @@ CV.prototype.thin = function( b1 , b2 ){
 		b1 = brush.rot90( b1 ) ;
 		b2 = brush.rot90( b2 ) ;
 	}
+	return this ;
 }
 //
 //------------------------------------------------------------
@@ -574,6 +575,7 @@ CV.prototype.thick = function( b1 , b2 ){
 		b1 = brush.rot90( b1 ) ;
 		b2 = brush.rot90( b2 ) ;
 	}
+	return this;
 }
 //
 //-------------------------------------------
