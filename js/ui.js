@@ -162,7 +162,7 @@ $('#reloadImg').click( function(){
 $('#erodebtn').click( function(){
 	var radius = $('#radius').val();
 	if ( $('input[name=brush]:checked', '#myForm').val()=='rect' ){
-		var b = brush.rect( radius * 2 + 1 );
+		var b = brush.rect( radius * 2 + 1 , radius * 2 + 1 );
 	}else
 		var b = brush.circle( radius );
 	var ImageCV = new CV( getImageData() );
@@ -171,9 +171,26 @@ $('#erodebtn').click( function(){
 $('#dilatebtn').click( function(){
 	var radius = $('#radius').val();
 	if ( $('input[name=brush]:checked', '#myForm').val()=='rect' ){
-		var b = brush.rect( radius * 2 + 1 );
+		var b = brush.rect( radius * 2 + 1, radius * 2 + 1 );
 	}else
 		var b = brush.circle( radius );
 	var ImageCV = new CV( getImageData() );
 	canvasContext.putImageData( ImageCV.dilate( b ).getImgData() , 0 , 0 );
 })
+$('#viewBrush').click( function(){
+	var radius = $('#radius').val();
+	if ( $('input[name=brush]:checked', '#myForm').val()=='rect' ){
+		var b = brush.rect( radius * 2 + 1, radius * 2 + 1 );
+	}else
+		var b = brush.circle( radius );
+	viewBrush( b );
+})
+function viewBrush( br ){
+	var t = '' ;
+	for ( var i in br.data ){
+		t = t + ' ' + br.data[i] ; 
+		if ( parseInt(i) % br.w == 0 && i )
+			t = '<br/>'
+	}
+	window.open().document.write(t);
+}

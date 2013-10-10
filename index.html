@@ -62,9 +62,11 @@
 		</div>
 		<hr/>
 		<div>
-			Radius:<input type='number' min='0' max='10' id="radius" value='1'/><br/>
+			Radius:<input type='number' min='0' max='100' id="radius" value='1'/><br/>
 			<input type="radio" name="brush" value="Square" checked> Square &nbsp;
-			<input type="radio" name="brush" value="Circle">Circle <br/>
+			<input type="radio" name="brush" value="Circle">Circle &nbsp;&nbsp;
+			<button class='btn' id='viewBrush'>View Structuring Matrix</button>
+			<br/>
 			<button id='erodebtn' class='btn' style='width:45%;'>Erode</button>
 			<button id='dilatebtn' class='btn' style='width:45%;'>Dilate</button>
 		</div>
