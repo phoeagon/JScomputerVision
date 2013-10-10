@@ -567,21 +567,36 @@ CV.prototype.hitormiss = function( b1 , b2 ){
 	if ( b2==null )
 		b2 = brush.neg( b1 ); 
 	T.invert().erode( b2 ) ;
-	this.erode( b1 );
-	return this.intersect( T );
+	return this.erode( b1 );.intersect( T );
 }
 //
 //------------------------------------------------------------
 //
-CV.prototype.thin = function(){
-	var b = brush.rect(3,3) ;
+CV.prototype.thin = function( b ){
+	if ( b==null )
+		var b = brush.homothin( 3 , 3 ) ;
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
-		//this.diff( T.hitormiss( b1 , ) );
+		this.diff( T.hitormiss( b1 ) );
 		b.rot90() ;
 	}
 }
-
+//
+//------------------------------------------------------------
+//
+CV.prototype.thick = function( b ){
+	if ( b==null )
+		var b = brush.homothin( 3 , 3 ) ;
+	var b = brush.rect(3,3) ;
+	for ( var i = 0 ; i < 4 ; ++ i ){
+		var T = this.clone( );
+		this.union( T.hitormiss( b1 ) );
+		b.rot90() ;
+	}
+}
+//
+//-------------------------------------------
+//
 CV.prototype.clone = function(){
 	return new CV( this );
 }
