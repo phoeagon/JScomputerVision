@@ -71,5 +71,18 @@ function testDilate(){
 
 function potato(){//WTF!
 	var T = new CV( getImageData() );
-	
+	T.threshold( );
+	showCV( T ) ;
+	if ( !confirm("Continue?") )
+		return ;
+	var Tb = T.clone();
+	T.thin();
+	showCV( T ) ;
+	if ( !confirm("Continue?") )
+		return ;
+}
+function showCV( T ){
+	canvasContext.putImageData( 
+		 T.getImgData() ,
+		0 , 0 ) // draw image back to canvas
 }

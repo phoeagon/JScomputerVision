@@ -455,30 +455,6 @@ CV.prototype.boundary = function( matrix , fit_color ){
 //
 CV.prototype.pixwiseOp = function( obj , op ){
 	if ( obj.cv_js ) //if another CV instance
-		var imgData = obj.imgData ; 
-	else 
-		var imgData = obj ; //assume ImageData
-	if ( imgData.width != this.imgData.width ||
-		 imgData.height != this.imgData.height ){
-		// TODO : auto scale
-		alert("Dimensions not fit");
-		console.log("Dimensions not fit");
-		return this;
-	}
-	for ( var i in imgData.data )
-	if ( parseInt(i) % 4 != 3 )//skip alpha
-		this.imgData.data[i] = op ( this.imgData.data[i] , 
-								imgData.data[i] );
-	return this ;
-}
-//
-//------------------------------------------------------------
-//
-// ## Pixel-wise Operation
-//
-//
-CV.prototype.pixwiseOp = function( obj , op ){
-	if ( obj.cv_js ) //if another CV instance
 		var imgD = obj.imgData ; 
 	else 
 		var imgD = obj ; //assume ImageData
@@ -489,7 +465,7 @@ CV.prototype.pixwiseOp = function( obj , op ){
 		console.log("Dimensions not fit");
 		return this;
 	}
-	for ( var i in imgData.data )
+	for ( var i in imgD.data )
 	if ( parseInt(i) % 4 != 3 )//skip alpha
 		this.imgData.data[i] = op ( this.imgData.data[i] , 
 								imgD.data[i] );
@@ -563,35 +539,40 @@ CV.prototype.diff = function( obj ){
 //
 //
 CV.prototype.hitormiss = function( b1 , b2 ){
+	if ( b2== null )
+		var b2 = b1; //fallback to classical pattern matching
 	var T = this.clone( ) ;
-	if ( b2==null )
-		b2 = brush.neg( b1 ); 
 	T.invert().erode( b2 ) ;
 	return this.erode( b1 ).intersect( T );
 }
 //
 //------------------------------------------------------------
 //
-CV.prototype.thin = function( b ){
-	if ( b==null )
-		var b = brush.homothin( 3 , 3 ) ;
+CV.prototype.thin = function( b1 , b2 ){
+	if ( b1 == null )
+		var b1 = brush.homothin( 1 );
+	if ( b2==null )
+		var b2 = brush.homobox( 1 ) ;
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
-		this.diff( T.hitormiss( b1 ) );
-		b.rot90() ;
+		this.diff( T.hitormiss( b1 , b2 ) );
+		b1 = brush.rot90( b1 ) ;
+		b2 = brush.rot90( b2 ) ;
 	}
 }
 //
 //------------------------------------------------------------
 //
-CV.prototype.thick = function( b ){
-	if ( b==null )
-		var b = brush.homothin( 3 , 3 ) ;
-	var b = brush.rect(3,3) ;
+CV.prototype.thick = function( b1 , b2 ){
+	if ( b1 == null )
+		var b1 = brush.homothin( 1 );
+	if ( b2==null )
+		var b2 = brush.homobox( 1 ) ;
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
-		this.union( T.hitormiss( b1 ) );
-		b.rot90() ;
+		this.union( T.hitormiss( b1 , b2  ) );
+		b1 = brush.rot90( b1 ) ;
+		b2 = brush.rot90( b2 ) ;
 	}
 }
 //

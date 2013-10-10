@@ -50,6 +50,8 @@ brush.cross = function( r ){
         for ( var j = 0 ; j < 2*r+1; ++ j ){
 			if ( i==r+1 || j==r+1 )
 				matrix[ (2*r+1)*j + i ] = 1 ;
+			else
+				matrix[ (2*r+1)*j + i ] = 0 ;
         }
     return {
             w : 2*r+1 ,
@@ -65,8 +67,26 @@ brush.homothin = function( r ){
     matrix[ (2*r+1)*(2*r+1)-1 ] = undefined;
     for (var i=0;i<2*r+1;++i)
         for ( var j = 0 ; j < 2*r+1; ++ j ){
-			if ( i==r+1 || !j )
+			if (( i==r || !j ) && j <= r )
 				matrix[ (2*r+1)*j + i ] = 1 ;
+			else 
+				matrix[ (2*r+1)*j + i ] = 0 ;
+        }
+    return {
+            w : 2*r+1 ,
+            h : 2*r+1 ,
+            data : matrix
+        }
+}
+brush.homobox = function( r ){
+    var matrix = [];
+    matrix[ (2*r+1)*(2*r+1)-1 ] = undefined;
+    for (var i=0;i<2*r+1;++i)
+        for ( var j = 0 ; j < 2*r+1; ++ j ){
+			if ( i<= r && j<=r )
+				matrix[ (2*r+1)*j + i ] = 1 ;
+			else 
+				matrix[ (2*r+1)*j + i ] = 0 ;
         }
     return {
             w : 2*r+1 ,
@@ -75,10 +95,10 @@ brush.homothin = function( r ){
         }
 }
 //--------------------------------------------
-brush.invert = function(){
-	for ( var i = 0 ; i < this.data.length ; ++ i )
-		mthis.data[i] ^= 1 ;
-	return this ;
+brush.invert = function( br ){
+	for ( var i = 0 ; i < br.data.length ; ++ i )
+		br.data[i] ^= 1 ;
+	return br ;
 }
 //-------------------------------------------
 brush.eclipse = function( r ){
