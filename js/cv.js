@@ -444,6 +444,8 @@ CV.prototype.close = function( matrix , fit_color , iteration){
 // This routine returns the `CV` object.
 //
 CV.prototype.boundary = function( matrix , fit_color ){
+	if ( !matrix ) 
+		var matrix = brush.rect(3,3);
 	var T = this.clone( );
 	return this.diff( T.erode( matrix , fit_color ) );
 }
@@ -552,7 +554,7 @@ CV.prototype.thin = function( b1 , b2 ){
 	if ( b1 == null )
 		var b1 = brush.homothin( 1 );
 	if ( b2==null )
-		var b2 = brush.homobox( 1 ) ;
+		var b2 = brush.invert( b1 )
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
 		this.diff( T.hitormiss( b1 , b2 ) );
@@ -581,7 +583,16 @@ CV.prototype.thick = function( b1 , b2 ){
 //-------------------------------------------
 //
 CV.prototype.clone = function(){
-	return new CV( this );
+	//if ( $ || jQuery ){ //we cannot directly deep copy a custom object even with JQ
+		var dataCopy = new Uint8ClampedArray(this.imgData.data);
+		var canvas = document.createElement('canvas');
+		var T = canvas.getContext('2d').createImageData(this.imgData.width, this.imgData.height);
+		T.data.set(dataCopy);
+		return new CV({
+				imgData : T ,
+				cv_js   : true
+			})
+	//}return new CV( JSON.parse(JSON.stringify(this)) );
 }
 //
 // ------------------------------------------------------------
