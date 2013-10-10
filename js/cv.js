@@ -555,6 +555,7 @@ CV.prototype.thin = function( b1 , b2 ){
 		var b1 = brush.homothin( 1 );
 	if ( b2==null )
 		var b2 = brush.invert( b1 )
+		//var b2 = brush.homobox( 1 )
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
 		this.diff( T.hitormiss( b1 , b2 ) );
