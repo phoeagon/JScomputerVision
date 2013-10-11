@@ -71,54 +71,71 @@ function testDilate(){
 
 function potato(){//WTF!
 	loadImg();
-	var T = new CV( getImageData() );
-	var Tb = T.clone();
-	Tb.threshold(90);
-	showCV( Tb ) ;
-	if ( !confirm("Continue?") )
-		return ;
+	var queue = [] ; //execution queue
+	var Tb , Tc , T , Td , Tmask;
+	queue.push( function(){
+		T = new CV( getImageData() );
+		Tb = T.clone();
+	} );
+	queue.push( function(){
+		Tb.threshold(90);
+		showCV( Tb ) ;
+		Tc = Tb.clone();
+	})
 	//L3=L.clone();L2=L.clone();showCV(L2.closeth(brush.rect(1,1)).threshold(20).intersect(L3.threshold(120)))
-	var Tc = Tb.clone();
-	var times = 15 ;
-	while ( times -- > 0 ){
-		//var Tb = T.clone();
-		Tc.thin();
-		Tc.thin();
-		Tc.thin();
-		Tc.thin();
-		Tc.thin();
-		showCV( Tc ) ;
-		if ( confirm("Is thinning enough?") )
-			break ;
+	var i = 20;
+	while ( i-- > 0 ){
+		queue.push( function(){
+			Tc.thin();
+		})
+		if ( i % 3 == 0 )
+			queue.push( function(){
+				showCV( Tc );
+			} )
 	}
-	var Td = T.clone();
-	Td.openth( brush.thinfg(1) );
-	//showCV( Td ) ;
-	Td.threshold( 13 );
-	//showCV( Td ) ;
-	var Tmask = Tb.clone().threshold(110).close(brush.cross(1,1)).erode(brush.circle(3));
-	//showCV( Tmask );
-	Td.intersect( Tmask );
-	//showCV( Td ) ;
-	Td.map( function( arr ){
-		if ( arr[0]<20 )
-			arr[3] = 0 ;//alpha (transparent!)
-		else{
-			arr[0]=0;
-		}
-		return arr;
+	queue.push( function(){
+		Td = T.clone();
+		Td.openth( brush.thinfg(1) );
+		Td.threshold( 13 );
+		//showCV( Td ) ;
+		Tmask = Tb.clone().threshold(110).close(brush.cross(1,1)).erode(brush.circle(3));
+		//showCV( Tmask );
+		Td.intersect( Tmask );
+		showCV( Td ) ;
 	} )
-	Tc.map( function( arr ){
-		if ( arr[0]<20 )
-			arr[3] = 0 ;//alpha (transparent!)
-		else{
-			arr[1]=0;
-		}
-		return arr;
-	} )
-	var F = T.clone();
-	//showCV( T.diff(Td) );
-	showCV( T.diff(Tc).diff(Td) );
+	queue.push( function(){
+		Td.map( function( arr ){
+			if ( arr[0]<20 )
+				arr[3] = 0 ;//alpha (transparent!)
+			else{
+				arr[0]=0;
+			}
+			return arr;
+		} )
+	})
+	queue.push( function(){
+		Tc.map( function( arr ){
+			if ( arr[0]<20 )
+				arr[3] = 0 ;//alpha (transparent!)
+			else{
+				arr[1]=0;
+			}
+			return arr;
+		} )
+	} ) 
+	queue.push( function(){
+		var F = T.clone();
+		//showCV( T.diff(Td) );
+		showCV( T.diff(Tc).diff(Td) );
+	})
+	function run( ind ){
+		console.log( "run "+ind );
+		if ( queue[ind]==null )
+			return ;
+		queue[ind]();	//execute
+		setTimeout( function(){run(ind+1)} , 100 );
+	}
+	run( 0 );
 }
 function showCV( T , noclear ){
 	if ( noclear == null || noclear == false )
