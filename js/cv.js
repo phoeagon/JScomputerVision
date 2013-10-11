@@ -442,6 +442,20 @@ CV.prototype.closeth = function( matrix , fit_color , iteration){
 	var T = this.clone();
 	return this.diff( T.close( matrix , fit_color , iteration ) );
 }
+//------------------------------------------------------------
+//
+// ## Open Tophat
+//
+// This routine impelements the Close Tophat.
+//
+// Parameters have the same meanings as in `dilate`.
+//
+// This routine returns the `CV` object.
+//
+CV.prototype.openth = function( matrix , fit_color , iteration){
+	var T = this.clone();
+	return this.diff( T.open( matrix , fit_color , iteration ) );
+}
 //
 //------------------------------------------------------------
 //

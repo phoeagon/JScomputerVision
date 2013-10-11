@@ -92,18 +92,14 @@ function potato(){//WTF!
 			break ;
 	}
 	var Td = T.clone();
-	Td.closeth( brush.rect(2,2) );
-	showCV( Td ) ;
-	if ( !confirm("Continue?") )
-		return ;
-	Td.threshold( 25 );
-	showCV( Td ) ;
-	if ( !confirm("Continue?") )
-		return ;
-	Td.intersect( Tb );
-	showCV( Td ) ;
-	if ( !confirm("Continue?") )
-		return ;
+	Td.openth( brush.thinfg(1) );
+	//showCV( Td ) ;
+	Td.threshold( 13 );
+	//showCV( Td ) ;
+	var Tmask = Tb.clone().threshold(110).close(brush.cross(1,1)).erode(brush.circle(3));
+	//showCV( Tmask );
+	Td.intersect( Tmask );
+	//showCV( Td ) ;
 	Td.map( function( arr ){
 		if ( arr[0]<20 )
 			arr[3] = 0 ;//alpha (transparent!)
@@ -121,6 +117,7 @@ function potato(){//WTF!
 		return arr;
 	} )
 	var F = T.clone();
+	//showCV( T.diff(Td) );
 	showCV( T.diff(Tc).diff(Td) );
 }
 function showCV( T , noclear ){
