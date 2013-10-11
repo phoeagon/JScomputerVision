@@ -299,11 +299,11 @@ CV.prototype.dilate = function( matrix , fit_color , iteration ){
 					for ( l = 0 ; l < m_w ; ++l ){//iterate through the matrix
 						if ( matrix.data[ GETMSUB( k , l ) ] ){
 							;//if pixel selected by brush
+							var sub = GETSUB( i + k - bdh , j + l - bdw );
 							var tmp_color = ( ( imgData[ sub * 4 ] +
 										imgData[ sub*4 + 1 ]
 										+ imgData[ sub * 4 + 2 ] ) / 3 );/* generate a tmp_color*/
 							;// threshold single pixel
-							var sub = GETSUB( i + k - bdh , j + l - bdw );
 							cur_value = Math.max( cur_value ,
 								( 255+tmp_color-fit_color[0]) /*&&
 								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
@@ -370,11 +370,11 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 					for ( l = 0 ; l < m_w ; ++l ){ //iterate through the matrix
 						if ( matrix.data[ GETMSUB( k , l ) ] ){
 							;//if pixel selected by brush
+							var sub = GETSUB( i + k - bdh , j + l - bdw );//get subscription
 							var tmp_color = ( ( imgData[ sub * 4 ] +
 											imgData[ sub*4 + 1 ]
 											+ imgData[ sub * 4 + 2 ] )
 											/ 3 ); 
-							var sub = GETSUB( i + k - bdh , j + l - bdw );//get subscription
 							//console.log(  255+tmp_color-fit_color[0] );
 							cur_value = Math.min( cur_value ,
 								( 255+tmp_color-fit_color[0] ) /*&&

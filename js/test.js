@@ -70,6 +70,7 @@ function testDilate(){
 }
 
 function potato(){//WTF!
+	loadImg();
 	var T = new CV( getImageData() );
 	var Tb = T.clone();
 	Tb.threshold(90);
@@ -77,29 +78,54 @@ function potato(){//WTF!
 	if ( !confirm("Continue?") )
 		return ;
 	//L3=L.clone();L2=L.clone();showCV(L2.closeth(brush.rect(1,1)).threshold(20).intersect(L3.threshold(120)))
-	var times = 20 ;
+	var Tc = Tb.clone();
+	var times = 15 ;
 	while ( times -- > 0 ){
 		//var Tb = T.clone();
-		T.thin();
-		showCV( T ) ;
-		if ( !confirm("Continue?") )
-			return ;
+		Tc.thin();
+		Tc.thin();
+		Tc.thin();
+		Tc.thin();
+		Tc.thin();
+		showCV( Tc ) ;
+		if ( confirm("Is thinning enough?") )
+			break ;
 	}
-	T.closeth( brush.rect(1,1) );
-	showCV( T ) ;
+	var Td = T.clone();
+	Td.closeth( brush.rect(2,2) );
+	showCV( Td ) ;
 	if ( !confirm("Continue?") )
 		return ;
-	T.threshold( 25 );
-	showCV( T ) ;
+	Td.threshold( 25 );
+	showCV( Td ) ;
 	if ( !confirm("Continue?") )
 		return ;
-	T.intersect( Tb );
-	showCV( T ) ;
+	Td.intersect( Tb );
+	showCV( Td ) ;
 	if ( !confirm("Continue?") )
 		return ;
+	Td.map( function( arr ){
+		if ( arr[0]<20 )
+			arr[3] = 0 ;//alpha (transparent!)
+		else{
+			arr[0]=0;
+		}
+		return arr;
+	} )
+	Tc.map( function( arr ){
+		if ( arr[0]<20 )
+			arr[3] = 0 ;//alpha (transparent!)
+		else{
+			arr[1]=0;
+		}
+		return arr;
+	} )
+	var F = T.clone();
+	showCV( T.diff(Tc).diff(Td) );
 }
-function showCV( T ){
-	canvasContext.clearRect(0,0,canvas.width,canvas.height);
+function showCV( T , noclear ){
+	if ( noclear == null || noclear == false )
+		canvasContext.clearRect(0,0,canvas.width,canvas.height);
 	canvasContext.putImageData( 
 		 T.getImgData() ,
 		0 , 0 ) // draw image back to canvas
