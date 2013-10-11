@@ -194,3 +194,10 @@ function viewBrush( br ){
 	}
 	window.open().document.write(t);
 }
+
+$('#welcome_splash').click( function(){
+	$('#welcome_splash').remove();
+	if ( confirm("Do you want to run this potato demo?") )
+		potato();
+}	);
+$('#potatobtn').click( potato );

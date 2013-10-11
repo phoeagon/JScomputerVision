@@ -73,6 +73,7 @@ function potato(){//WTF!
 	loadImg();
 	var queue = [] ; //execution queue
 	var Tb , Tc , T , Td , Tmask;
+	$('#progress_splash').css('display','block');
 	queue.push( function(){
 		T = new CV( getImageData() );
 		Tb = T.clone();
@@ -127,6 +128,7 @@ function potato(){//WTF!
 		var F = T.clone();
 		//showCV( T.diff(Td) );
 		showCV( T.diff(Tc).diff(Td) );
+		$('#progress_splash').css('display','none');
 	})
 	function run( ind ){
 		console.log( "run "+ind );
