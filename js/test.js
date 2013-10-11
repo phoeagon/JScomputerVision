@@ -71,17 +71,35 @@ function testDilate(){
 
 function potato(){//WTF!
 	var T = new CV( getImageData() );
-	T.threshold( );
+	var Tb = T.clone();
+	Tb.threshold(90);
+	showCV( Tb ) ;
+	if ( !confirm("Continue?") )
+		return ;
+	//L3=L.clone();L2=L.clone();showCV(L2.closeth(brush.rect(1,1)).threshold(20).intersect(L3.threshold(120)))
+	var times = 20 ;
+	while ( times -- > 0 ){
+		//var Tb = T.clone();
+		T.thin();
+		showCV( T ) ;
+		if ( !confirm("Continue?") )
+			return ;
+	}
+	T.closeth( brush.rect(1,1) );
 	showCV( T ) ;
 	if ( !confirm("Continue?") )
 		return ;
-	var Tb = T.clone();
-	T.thin();
+	T.threshold( 25 );
+	showCV( T ) ;
+	if ( !confirm("Continue?") )
+		return ;
+	T.intersect( Tb );
 	showCV( T ) ;
 	if ( !confirm("Continue?") )
 		return ;
 }
 function showCV( T ){
+	canvasContext.clearRect(0,0,canvas.width,canvas.height);
 	canvasContext.putImageData( 
 		 T.getImgData() ,
 		0 , 0 ) // draw image back to canvas

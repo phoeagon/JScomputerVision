@@ -301,13 +301,11 @@ CV.prototype.dilate = function( matrix , fit_color , iteration ){
 							;//if pixel selected by brush
 							var tmp_color = ( ( imgData[ sub * 4 ] +
 										imgData[ sub*4 + 1 ]
-										+ imgData[ sub * 4 + 2 ] ) / 3 )
-									 > 128 ? 255 : 0;/* generate a tmp_color, dirty fix
-									for the case when the input is not a thresholded image*/
+										+ imgData[ sub * 4 + 2 ] ) / 3 );/* generate a tmp_color*/
 							;// threshold single pixel
 							var sub = GETSUB( i + k - bdh , j + l - bdw );
-							cur_value = cur_value ||
-								( tmp_color==fit_color[0] /*&&
+							cur_value = Math.max( cur_value ,
+								( 255+tmp_color-fit_color[0]) /*&&
 								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
 								  imgData[ sub * 4 + 2 ]==fit_color[2]*/
 								 );
@@ -315,9 +313,9 @@ CV.prototype.dilate = function( matrix , fit_color , iteration ){
 						}
 					}
 				var sub = GETSUB( i  , j  );//subscription of the larger (processed image)
-				tmp[ sub*4 ] = cur_value ? 255 : 0 ;//R
-				tmp[ sub*4 + 1 ] = cur_value ? 255 : 0 ;//G
-				tmp[ sub*4 + 2 ] = cur_value ? 255 : 0 ;//B
+				tmp[ sub*4 ] = cur_value ;//R
+				tmp[ sub*4 + 1 ] = cur_value ;//G
+				tmp[ sub*4 + 2 ] = cur_value ;//B
 				tmp[ sub*4 + 3 ] = imgData[ sub*4 + 3 ];//A
 				;//if ( imgData[ sub*4 ] !== tmp[ sub*4 ]  )
 				;//	console.log("#");;
@@ -367,7 +365,7 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 			tmp[i] = 0;
 		for ( i = bdh ; i < h-bdh ; ++i )
 			for ( j = bdw ; j<w-bdw ; ++j ){ //iterate through pixels on the processed image
-				var cur_value = 1;//a placeholder to do bitwise operations				
+				var cur_value = 255;//a placeholder to do bitwise operations				
 				for ( k = 0; k < m_h ; ++k )
 					for ( l = 0 ; l < m_w ; ++l ){ //iterate through the matrix
 						if ( matrix.data[ GETMSUB( k , l ) ] ){
@@ -375,13 +373,11 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 							var tmp_color = ( ( imgData[ sub * 4 ] +
 											imgData[ sub*4 + 1 ]
 											+ imgData[ sub * 4 + 2 ] )
-											/ 3 )
-										> 128 ? 255 : 0; /* generate a tmp_color, dirty fix
-									for the case when the input is not a thresholded image*/
-							;// threshold single pixel
+											/ 3 ); 
 							var sub = GETSUB( i + k - bdh , j + l - bdw );//get subscription
-							cur_value = cur_value &&
-								( tmp_color==fit_color[0] /*&&
+							//console.log(  255+tmp_color-fit_color[0] );
+							cur_value = Math.min( cur_value ,
+								( 255+tmp_color-fit_color[0] ) /*&&
 								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
 								  imgData[ sub * 4 + 2 ]==fit_color[2]*/
 							 );
@@ -389,9 +385,9 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 						}
 					}
 				var sub = GETSUB( i  , j  );	//subscription of the larger (processed image)
-				tmp[ sub*4 ] = cur_value ? 255 : 0 ;//R
-				tmp[ sub*4 + 1 ] = cur_value ? 255 : 0 ;//G
-				tmp[ sub*4 + 2 ] = cur_value ? 255 : 0 ;//B
+				tmp[ sub*4 ] = cur_value ;//R
+				tmp[ sub*4 + 1 ] = cur_value;//G
+				tmp[ sub*4 + 2 ] = cur_value;//B
 				tmp[ sub*4 + 3 ] = imgData[ sub*4 + 3 ];//A
 				;//if ( imgData[ sub*4 ] !== tmp[ sub*4 ]  )
 				;//	console.log("#");;
@@ -434,6 +430,21 @@ CV.prototype.close = function( matrix , fit_color , iteration){
 //
 //------------------------------------------------------------
 //
+// ## Close Tophat
+//
+// This routine impelements the Close Tophat.
+//
+// Parameters have the same meanings as in `dilate`.
+//
+// This routine returns the `CV` object.
+//
+CV.prototype.closeth = function( matrix , fit_color , iteration){
+	var T = this.clone();
+	return this.diff( T.close( matrix , fit_color , iteration ) );
+}
+//
+//------------------------------------------------------------
+//
 // ## Boundary
 //
 // This routine impelements the boundary.
@@ -467,10 +478,11 @@ CV.prototype.pixwiseOp = function( obj , op ){
 		console.log("Dimensions not fit");
 		return this;
 	}
-	for ( var i in imgD.data )
+	for ( var i in imgD.data ){
 	if ( parseInt(i) % 4 != 3 )//skip alpha
 		this.imgData.data[i] = op ( this.imgData.data[i] , 
 								imgD.data[i] );
+	}
 	return this ;
 }
 //
