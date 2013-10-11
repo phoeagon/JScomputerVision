@@ -200,4 +200,6 @@ $('#welcome_splash').click( function(){
 	if ( confirm("Do you want to run this potato demo?") )
 		potato();
 }	);
-$('#potatobtn').click( potato );
+$('#potatobtn').click( function(){
+	potato();
+	} );
