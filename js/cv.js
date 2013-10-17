@@ -621,7 +621,7 @@ CV.prototype.thin = function( b1 , b2 , c1 , c2 ){
 		var c1 = brush.octagonalfg();
 	if ( c2==null )
 		var c2 = brush.octagonalbg()
-		//var b2 = brush.homobox( 1 )
+		;//var b2 = brush.homobox( 1 )
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
 		this.diff( T.hitormiss( b1 , b2 ) );
@@ -652,7 +652,7 @@ CV.prototype.thick = function( b1 , b2 , c1 , c2 ){
 		var c1 = brush.octagonalfg();
 	if ( c2==null )
 		var c2 = brush.octagonalbg()
-		//var b2 = brush.homobox( 1 )
+		;//var b2 = brush.homobox( 1 )
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
 		this.union( T.hitormiss( b1 , b2 ) );
@@ -675,7 +675,7 @@ CV.prototype.thick = function( b1 , b2 , c1 , c2 ){
 // Corresponding data are deep-copied.
 //
 CV.prototype.clone = function(){
-	//if ( $ || jQuery ){ //we cannot directly deep copy a custom object even with JQ
+	;//if ( $ || jQuery ){ //we cannot directly deep copy a custom object even with JQ
 		var dataCopy = new Uint8ClampedArray(this.imgData.data);
 		var canvas = document.createElement('canvas');
 		var T = canvas.getContext('2d').createImageData(this.imgData.width, this.imgData.height);
@@ -684,12 +684,12 @@ CV.prototype.clone = function(){
 				imgData : T ,
 				cv_js   : true
 			})
-	//}return new CV( JSON.parse(JSON.stringify(this)) );
+	;//}return new CV( JSON.parse(JSON.stringify(this)) );
 }
 //
 // ------------------------------------------------------------
 //
-// ## fromBrush
+// ## from Brush
 //
 // This routine takes in a `brush` object through its parameter `br`
 // and populate the current `CV` object with the corresponding data.
@@ -718,7 +718,7 @@ CV.prototype.fromBrush = function ( br ){
 //
 //-------------------------------------------------------------
 //
-// ## toBrush
+// ## to Brush
 //
 // This routines converts the image contained in the current
 // CV object into a `brush` object as defined in `brush.js`.
