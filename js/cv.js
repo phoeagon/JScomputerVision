@@ -479,6 +479,7 @@ CV.prototype.boundary = function( matrix , fit_color ){
 //
 // ## Pixel-wise Operation
 //
+// This 
 //
 CV.prototype.pixwiseOp = function( obj , op ){
 	if ( obj.cv_js ) //if another CV instance
@@ -504,6 +505,15 @@ CV.prototype.pixwiseOp = function( obj , op ){
 //
 // ## Map Operation
 //
+// This routine implements a per-pixel map operation. It takes in
+// a callable object having the following form:
+//
+//      function op ( [ pixel.R , pixel.G , pixel.B , pixel.A ] ){
+//				// foo bar baz.........
+//				return [ result.R , result.G , result.B , result.A ];
+//		}
+//
+//  whereas `R`, `G`, `B`, `A` represent the integer value of each channel (0~255)
 //
 CV.prototype.map = function( op ){
 	var dt = this.imgData.data ; 
@@ -520,7 +530,8 @@ CV.prototype.map = function( op ){
 //------------------------------------------------------------
 //
 // ## Union
-//
+// This routine implements the set *union* operation. It takes in
+// the `CV` object to union with and returns the resulting `CV` object.
 //
 CV.prototype.union = function( obj ){
 	return this.pixwiseOp( obj , Math.max );
@@ -530,6 +541,8 @@ CV.prototype.union = function( obj ){
 //
 // ## Invert
 //
+//  This routine implements the inversion (negation) operation.
+//  It returns the current `CV` object after operating on it.
 //
 CV.prototype.invert = function(){
 	function inv( arr ){
@@ -546,6 +559,8 @@ CV.prototype.invert = function(){
 //
 // ## Intersect
 //
+// This routine implements the set *intersection* operation. It takes in
+// the `CV` object to operate against and returns the resulting `CV` object.
 //
 CV.prototype.intersect = function( obj ){
 	return this.pixwiseOp( obj , Math.min );
@@ -555,6 +570,8 @@ CV.prototype.intersect = function( obj ){
 //
 // ## Diff
 //
+// This routine implements the *difference* operation. It takes in
+// the `CV` object to compare against and returns the resulting `CV` object.
 //
 CV.prototype.diff = function( obj ){
 	function minus( a , b ) { return a - b } 
@@ -565,6 +582,14 @@ CV.prototype.diff = function( obj ){
 //
 // ## Hit-or-miss
 //
+// **TODO**: This can be implemented more efficiently without
+// leveraging `clone()`.
+//
+// This routine implements the *hit-and-miss* operation. It takes
+// in `b1` and `b2`. `b1` represents the foreground structuring pattern
+// and `b2` the background.
+//
+// This routine returns the `CV` object operated on.
 //
 CV.prototype.hitormiss = function( b1 , b2 ){
 	if ( b2== null )
@@ -575,6 +600,18 @@ CV.prototype.hitormiss = function( b1 , b2 ){
 }
 //
 //------------------------------------------------------------
+//	## Thin
+//  This routine performs a *thin* operation on the current
+//  `CV` object.
+//
+//   This routine takes in four parameters. `(b1,b2)` represent
+//	the pair of structuring element for the first **hit-and-miss**
+//  operation with `b1` marking the foreground pattern and `b2` the
+//  background. `(c1,c2)` has similiar syntax for the structuring
+//  element for the second **hit-and-miss** operation. Both pairs
+//  could be omitted and has its corresponding fallback value.
+//
+//  This routine returns the `CV` object operated on.
 //
 CV.prototype.thin = function( b1 , b2 , c1 , c2 ){
 	if ( b1 == null )
@@ -602,6 +639,11 @@ CV.prototype.thin = function( b1 , b2 , c1 , c2 ){
 //
 //------------------------------------------------------------
 //
+// # Thicken
+//
+// **TODO**
+// This routine is still under construction.
+//
 CV.prototype.thick = function( b1 , b2 , c1 , c2 ){
 	if ( b1 == null )
 		var b1 = brush.thinfg();
@@ -628,6 +670,11 @@ CV.prototype.thick = function( b1 , b2 , c1 , c2 ){
 //
 //-------------------------------------------
 //
+// ## Clone
+//
+// This method returns a newly constructed copy of the current `CV` object.
+// Corresponding data are deep-copied.
+//
 CV.prototype.clone = function(){
 	//if ( $ || jQuery ){ //we cannot directly deep copy a custom object even with JQ
 		var dataCopy = new Uint8ClampedArray(this.imgData.data);
@@ -642,6 +689,17 @@ CV.prototype.clone = function(){
 }
 //
 // ------------------------------------------------------------
+//
+// ## fromBrush
+//
+// This routine takes in a `brush` object through its parameter `br`
+// and populate the current `CV` object with the corresponding data.
+// The binary image data inside `brush` object is therefore converted
+// to 4-channel RGBA image for future processing.
+//
+// This routine takes in one parameter `br` as the `brush` to convert from.
+//
+// This routine returns the constructed `CV` object.
 //
 
 CV.prototype.fromBrush = function ( br ){
@@ -658,6 +716,18 @@ CV.prototype.fromBrush = function ( br ){
 	
 	return this ;
 }
+//
+//-------------------------------------------------------------
+//
+// ## toBrush
+//
+// This routines converts the image contained in the current
+// CV object into a `brush` object as defined in `brush.js`.
+// Brush is basically a binary image object often used as
+// structuring matrix.
+//
+// This routine returns the `brush` object constructed.
+//
 CV.prototype.toBrush = function(){
 	var T = {
 		w : this.imgData.width , 
