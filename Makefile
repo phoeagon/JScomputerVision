@@ -6,6 +6,7 @@ run:
 doc: docs
 	
 handin: *
+	rm handin.tar.gz
 	tar zcf handin.tar.gz *
 
 deploy:
