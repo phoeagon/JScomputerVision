@@ -446,7 +446,7 @@ CV.prototype.closeth = function( matrix , fit_color , iteration){
 //
 // ## Open Tophat
 //
-// This routine impelements the Close Tophat.
+// This routine impelements the Open Tophat.
 //
 // Parameters have the same meanings as in `dilate`.
 //
@@ -479,7 +479,6 @@ CV.prototype.boundary = function( matrix , fit_color ){
 //
 // ## Pixel-wise Operation
 //
-// This 
 //
 CV.prototype.pixwiseOp = function( obj , op ){
 	if ( obj.cv_js ) //if another CV instance
