@@ -871,10 +871,10 @@ CV.prototype.adahisteq = function( radius , trim , grid ) {
 				var v4 = conv( original_value , info[ GETSUB(gridhx,gridhy) ] );
 				if ( gridlx == gridhx ){ gridhx += grid/2; gridlx -= grid/2 ;}
 				if ( gridly == gridhy ){ gridhy += grid/2; gridly -= grid/2 ;}
-				var finalv = ( 	v1*(i-gridlx)*(j-gridly) + 
-								v2*(i-gridlx)*(gridhy-j) +
-								v3*(gridhx-i)*(j-gridly)+
-								v4*(gridhx-i)*(gridhy-j)
+				var finalv = ( 	v4*(i-gridlx)*(j-gridly) + 
+								v3*(i-gridlx)*(gridhy-j) +
+								v2*(gridhx-i)*(j-gridly)+
+								v1*(gridhx-i)*(gridhy-j)
 							) * coeff ;
 				finalv = Math.round( finalv );
 				if ( finalv < 0 ) finalv = 0 ;
