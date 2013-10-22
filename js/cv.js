@@ -858,7 +858,13 @@ CV.prototype.adahisteq = function( radius , trim , grid ) {
 					return l*w+r;
 				}
 				var sub = GETSUB( i , j ) ;
-				var coeff = 1 / ( grid * grid );
+				var coeff = 1; 
+				if ( gridly==gridhy )
+					coeff /= grid ;
+				else coeff /= (gridhy-gridly );
+				if ( gridhx == gridlx )
+					coeff /= grid ;
+				else coeff /= ( gridhx - gridlx );
 				//assume grayscale
 				var original_value = imgData[ sub*4  ] ;
 				if ( info[ GETSUB(gridhx,gridhy) ] == null ){
