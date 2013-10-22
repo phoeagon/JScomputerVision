@@ -249,8 +249,10 @@ $('#histeqbtn').click( function(){
 	if ( min - max == 0 ){ min = 127 ; max = 128 };
 	var k = 255 / ( max - min ) 
 	canvasContext.putImageData( a.map( function(pixel){
-		for (i=0;i<3;++i)
-			pixel[i] = (pixel[i] - min) * k ;
+		for (i=0;i<3;++i){
+			pixel[i] = Math.max( 0 , pixel[i] - min) * k ;
+			pixel[i] = Math.min( pixel[i] , 255 ) ;
+		}
 		return pixel;
 	}).getImgData() , 0 , 0 );
 	drawHist( a );
