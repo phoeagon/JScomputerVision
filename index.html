@@ -45,33 +45,6 @@
 	<canvas id="myCanvas" style="border:1px solid #d3d3d3;position:relative;z-index:10;">
 	Your browser does not support the HTML5 canvas tag.</canvas>
 	
-	<!--welcome splashes-->
-	<div id="welcome_splash" style="background-color:rgba(255,255,200,0.5);position:absolute;left: 15%; top: 20%; width:70%;height:60%;z-index:200;">
-		<table border="1" style='height:100%;'>
-		<tr style='height:100px;'>
-		<td colspan="2"><p style='font-size:90px;font-style:bold;'>DANGER</p></td>
-		</tr>
-		<tr>
-		<td>
-		<p style='font-size:40px;line-height:50px;'>
-				This demo is known to BE SLOW (26 secs on my PC), which may cause your CPU to overheat and system freezed. <br/>
-				Click on this dialog to dismiss it.<br/>
-		</p></td>
-		<td>
-				<b>Result:</b><br/>
-				<img src='./img/potato.png' style='zoom:1;'>
-				<img src='./img/potato_result.png' style='zoom:2;'>
-		</td>
-		</tr>
-		</table>
-		<p>
-		<!--<button class='btn' style='width:98%;font-size:90px;height:100px;'>Ok, copy that!</button>-->
-		</p>
-	</div>
-	<div id="progress_splash" style="background-color:rgba(255,200,200,0.5);position:absolute;left: 30%; top: 20%; width:40%;height:60%;z-index:200;display:none;">
-		<p><img src='./img/pg.gif'></p>
-	</div>
-	<!--welcome splashes ends-->
 	</div>
 	
 	<div class="span3 fullpagecol pull-right" style='background-color:rgba(255,230,255,0.3);position:relative;z-index:100;'>
@@ -99,7 +72,9 @@
 			<button id='dilatebtn' class='btn' style='width:45%;'>Dilate</button>
 		</div>
 		<hr/>
-			<button id='potatobtn' class='btn btn-primary' style='width:95%;height:40px;'>Potato Demo</button>
+			<button id='invbtn' class='btn' style='width:95%;height:40px;'>Invert</button><br/>
+			<button id='logbtn' class='btn' style='width:45%;height:40px;'>Log</button>
+			<button id='invlogbtn' class='btn' style='width:45%;height:40px;'>InvLog</button>
 		<br/>
 		<a href="#" id="grayscaleImg" class='btn halfwid'>To Grayscale</a>
 		<a href="#" id="savedImg" class='btn halfwid'>Save Image</a>

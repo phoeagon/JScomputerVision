@@ -17,7 +17,7 @@ var imgParam = {
 //
 //------------------------------------------------------------
 //
-function drawHist(){
+function drawHist( ImageCV ){
 	var hist = ImageCV.histogram( true );
 	var data = [];
 	for ( var i=0; i < 256; ++i )
@@ -31,7 +31,7 @@ function drawHist(){
 function updateImg(){
 	window.ImageCV = new CV( getImageData() );	//write to global variable
 	$('#thresv').val( ImageCV.otsu() );
-	drawHist();
+	drawHist( ImageCV );
 }
 //
 //-------------------------------
@@ -195,11 +195,28 @@ function viewBrush( br ){
 	window.open().document.write(t);
 }
 
-$('#welcome_splash').click( function(){
-	$('#welcome_splash').remove();
-	if ( confirm("Do you want to run this potato demo?") )
-		potato();
-}	);
-$('#potatobtn').click( function(){
-	potato();
-	} );
+$('#invbtn').click( function(){
+	var a = new CV(getImageData());
+	canvasContext.putImageData( a.invert().getImgData() , 0 , 0 );
+	drawHist( a );
+})
+$('#logbtn').click( function(){
+	var a = new CV(getImageData());
+	var k = 255 / Math.log( 256 ) ;
+	canvasContext.putImageData( a.map( function(pixel){
+		for (i=0;i<3;++i)
+			pixel[i] = Math.log(pixel[i] + 1) * k ;
+		return pixel;
+	}).getImgData() , 0 , 0 );
+	drawHist( a );
+})
+$('#invlogbtn').click( function(){
+	var a = new CV(getImageData());
+	var k = Math.log( 256 ) / 255;
+	canvasContext.putImageData( a.map( function(pixel){
+		for (i=0;i<3;++i)
+			pixel[i] = Math.exp( pixel[i]*k ) - 1 ;
+		return pixel;
+	}).getImgData() , 0 , 0 );
+	drawHist( a );
+})
