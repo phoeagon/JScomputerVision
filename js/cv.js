@@ -796,6 +796,16 @@ CV.prototype.adahisteq = function( radius , trim ) {
 					hist[ clo.imgData.data[ k + sub*4 ] ] -- ;
 			}
 		}
+		for ( y = 0 ; y < radius*2 ; ++ y ){
+			for ( x = 0 ; x < radius*2 + 1 ; ++ x ){
+				var sub = GETSUB( i - radius + x , y );
+				for ( k = 0 ; k < 3 ; ++ k ) // calc RGB ignore A
+					hist[ clo.imgData.data[ k + sub*4 ] ]-- ;
+			}
+			var cnt = (radius*2+1)*(2*radius+1-y)*3 ; //3 channels
+			if ( y >= radius )
+				stat( hist , cnt , i , w+y-radius , clo );
+		}
 	}
 	console.log( debug );
 	return this ;
