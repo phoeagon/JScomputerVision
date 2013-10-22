@@ -231,3 +231,27 @@ $('#powerbtn').click( function(){
 	}).getImgData() , 0 , 0 );
 	drawHist( a );
 })
+$('#histeqbtn').click( function(){
+	var a = new CV(getImageData());
+	var trim = parseFloat( $('#trim').val() ) / 200 ;
+	var hist = a.histogram( true ) , min = 0 , max = 255;
+	var accu = 0 ;
+	while( (accu+=hist[min])<=trim && min < 255) 
+		min++;
+	accu = 0 ;
+	while( (accu += hist[max])<=trim && max ) 
+		max -- ;
+	if ( min )
+		min -- ; 
+	if ( max!== 255 )
+		max ++ ;
+	console.log( [ min , max ] );
+	if ( min - max == 0 ){ min = 127 ; max = 128 };
+	var k = 255 / ( max - min ) 
+	canvasContext.putImageData( a.map( function(pixel){
+		for (i=0;i<3;++i)
+			pixel[i] = (pixel[i] - min) * k ;
+		return pixel;
+	}).getImgData() , 0 , 0 );
+	drawHist( a );
+})
