@@ -671,3 +671,59 @@ CV.prototype.toBrush = function(){
 	}
 	return T ;
 }
+//
+//------------------------------------
+//
+CV.prototype.log = function(){
+	var k = 255 / Math.log( 256 ) ;
+	this.map( function(pixel){
+		for (i=0;i<3;++i)
+			pixel[i] = Math.log(pixel[i] + 1) * k ;
+		return pixel;
+	})
+	return this 
+}
+CV.prototype.invlog = function(){
+	var k = Math.log( 256 ) / 255;
+	this.map( function(pixel){
+		for (i=0;i<3;++i)
+			pixel[i] = Math.exp( pixel[i]*k ) - 1 ;
+		return pixel;
+	})
+	return this 
+}
+CV.prototype.power = function( gamma ){
+	var k = Math.exp( Math.log(255) * gamma ) / 255;
+	this.map( function(pixel){
+		for (i=0;i<3;++i)
+			pixel[i] = Math.exp(Math.log(pixel[i])*gamma) / k;
+		return pixel;
+	})
+	return this 
+}
+CV.prototype.histeq = function( trim ){
+	if ( trim == null )
+		trim = 0;
+	var hist = this.histogram( true ) , min = 0 , max = 255;
+	var accu = 0 ;
+	while( (accu+=hist[min])<=trim && min < 255) 
+		min++;
+	accu = 0 ;
+	while( (accu += hist[max])<=trim && max ) 
+		max -- ;
+	if ( min )
+		min -- ; 
+	if ( max!== 255 )
+		max ++ ;
+	//console.log( [ min , max ] );
+	if ( min - max == 0 ){ min = 127 ; max = 128 };
+	var k = 255 / ( max - min ) 
+	this.map( function(pixel){
+		for (i=0;i<3;++i){
+			pixel[i] = Math.max( 0 , pixel[i] - min) * k ;
+			pixel[i] = Math.min( pixel[i] , 255 ) ;
+		}
+		return pixel;
+	})
+	return this ;
+}

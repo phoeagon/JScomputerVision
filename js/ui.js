@@ -202,58 +202,23 @@ $('#invbtn').click( function(){
 })
 $('#logbtn').click( function(){
 	var a = new CV(getImageData());
-	var k = 255 / Math.log( 256 ) ;
-	canvasContext.putImageData( a.map( function(pixel){
-		for (i=0;i<3;++i)
-			pixel[i] = Math.log(pixel[i] + 1) * k ;
-		return pixel;
-	}).getImgData() , 0 , 0 );
+	canvasContext.putImageData( a.log().getImgData() , 0 , 0 );
 	drawHist( a );
 })
 $('#invlogbtn').click( function(){
 	var a = new CV(getImageData());
-	var k = Math.log( 256 ) / 255;
-	canvasContext.putImageData( a.map( function(pixel){
-		for (i=0;i<3;++i)
-			pixel[i] = Math.exp( pixel[i]*k ) - 1 ;
-		return pixel;
-	}).getImgData() , 0 , 0 );
+	canvasContext.putImageData( a.invlog().getImgData() , 0 , 0 );
 	drawHist( a );
 })
 $('#powerbtn').click( function(){
 	var a = new CV(getImageData());
 	var gamma = parseFloat( $('#gamma').val() );
-	var k = Math.exp( Math.log(255) * gamma ) / 255;
-	canvasContext.putImageData( a.map( function(pixel){
-		for (i=0;i<3;++i)
-			pixel[i] = Math.exp(Math.log(pixel[i])*gamma) / k;
-		return pixel;
-	}).getImgData() , 0 , 0 );
+	canvasContext.putImageData( a.power(gamma).getImgData() , 0 , 0 );
 	drawHist( a );
 })
 $('#histeqbtn').click( function(){
 	var a = new CV(getImageData());
 	var trim = parseFloat( $('#trim').val() ) / 200 ;
-	var hist = a.histogram( true ) , min = 0 , max = 255;
-	var accu = 0 ;
-	while( (accu+=hist[min])<=trim && min < 255) 
-		min++;
-	accu = 0 ;
-	while( (accu += hist[max])<=trim && max ) 
-		max -- ;
-	if ( min )
-		min -- ; 
-	if ( max!== 255 )
-		max ++ ;
-	console.log( [ min , max ] );
-	if ( min - max == 0 ){ min = 127 ; max = 128 };
-	var k = 255 / ( max - min ) 
-	canvasContext.putImageData( a.map( function(pixel){
-		for (i=0;i<3;++i){
-			pixel[i] = Math.max( 0 , pixel[i] - min) * k ;
-			pixel[i] = Math.min( pixel[i] , 255 ) ;
-		}
-		return pixel;
-	}).getImgData() , 0 , 0 );
+	canvasContext.putImageData( a.histeq( trim ).getImgData() , 0 , 0 );
 	drawHist( a );
 })
