@@ -741,7 +741,7 @@ CV.prototype.adahisteq = function( radius , trim ) {
 	}
 	var clo = this.clone();
 	
-			function stat( hist , sum , i , j ){
+			function stat( hist , sum , i , j , clo ){
 				var min = 0 , max = 255 , accum = 0 , crit = sum * trim   ;
 				while ( (accum += hist[min] ) <= crit && min <= 255 )
 					++min ;
@@ -769,12 +769,16 @@ CV.prototype.adahisteq = function( radius , trim ) {
 		for ( j = 0 ; j < 256 ; ++j ) 
 			hist[j] = 0 ;
 		// calc context for first pixel ( except for the first )
-		for ( x = 0 ; x < radius*2 + 1 ; ++ x )
-			for ( y = 0 ; y < radius*2 ; ++ y ){
+		for ( y = 0 ; y < radius*2 ; ++ y ){
+			for ( x = 0 ; x < radius*2 + 1 ; ++ x ){
 				var sub = GETSUB( i - radius + x , y );
 				for ( k = 0 ; k < 3 ; ++ k ) // calc RGB ignore A
 					hist[ clo.imgData.data[ k + sub*4 ] ]++ ;
 			}
+			var cnt = (radius*2+1)*y*3 ; //3 channels
+			if ( y >= radius )
+				stat( hist , cnt , i , y-radius , clo );
+		}
 		var sum = (radius*2 + 1)*(radius*2+1)*3 ; //3 channels
 		for ( j = radius ; j <= w - radius ; ++ j ){
 			// for each pixel add the first column
@@ -784,7 +788,7 @@ CV.prototype.adahisteq = function( radius , trim ) {
 					hist[ clo.imgData.data[ k + sub*4 ] ] ++ ;
 			}
 			// do statistics
-			stat( hist , sum , i , j );
+			stat( hist , sum , i , j , clo );
 			// remove last column
 			for ( x = 0 ; x < 2*radius + 1 ; ++ x ){
 				var sub = GETSUB( i - radius + x , j - radius ) ;
