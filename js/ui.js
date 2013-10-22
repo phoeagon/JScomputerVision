@@ -222,3 +222,10 @@ $('#histeqbtn').click( function(){
 	canvasContext.putImageData( a.histeq( trim ).getImgData() , 0 , 0 );
 	drawHist( a );
 })
+$('#adahisteqbtn').click( function(){
+	var a = new CV(getImageData());
+	var trim = parseFloat( $('#trim').val() ) / 200 ;
+	var radius = parseFloat( $('#adaradius').val() ) ;
+	canvasContext.putImageData( a.adahisteq( radius , trim ).getImgData() , 0 , 0 );
+	drawHist( a );
+})
