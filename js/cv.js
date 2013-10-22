@@ -797,14 +797,16 @@ CV.prototype.adahisteq = function( radius , trim ) {
 			}
 		}
 		for ( y = 0 ; y < radius*2 ; ++ y ){
+			var cnt = 0 ; 
+			for ( var v in hist )
+				cnt += hist[v] ;
+			if ( y <= radius )
+				stat( hist , cnt , i , w+y-radius+1 , clo );
 			for ( x = 0 ; x < radius*2 + 1 ; ++ x ){
-				var sub = GETSUB( i - radius + x , y );
+				var sub = GETSUB( i - radius + x , w-2*radius+y );
 				for ( k = 0 ; k < 3 ; ++ k ) // calc RGB ignore A
 					hist[ clo.imgData.data[ k + sub*4 ] ]-- ;
 			}
-			var cnt = (radius*2+1)*(2*radius+1-y)*3 ; //3 channels
-			if ( y >= radius )
-				stat( hist , cnt , i , w+y-radius , clo );
 		}
 	}
 	console.log( debug );
