@@ -220,3 +220,14 @@ $('#invlogbtn').click( function(){
 	}).getImgData() , 0 , 0 );
 	drawHist( a );
 })
+$('#powerbtn').click( function(){
+	var a = new CV(getImageData());
+	var gamma = parseFloat( $('#gamma').val() );
+	var k = Math.exp( Math.log(255) * gamma ) / 255;
+	canvasContext.putImageData( a.map( function(pixel){
+		for (i=0;i<3;++i)
+			pixel[i] = Math.exp(Math.log(pixel[i])*gamma) / k;
+		return pixel;
+	}).getImgData() , 0 , 0 );
+	drawHist( a );
+})
