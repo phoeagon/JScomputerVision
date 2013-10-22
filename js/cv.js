@@ -727,7 +727,14 @@ CV.prototype.histeq = function( trim ){
 	})
 	return this ;
 }
-CV.prototype.adahisteq = function( radius , trim ) {
+//
+//-----------------------------------------
+//
+// ## 
+// If `record` is provided, this routine writes range info to `record`.
+// Otherwise it does a *naive* AHE and write back to `this`
+//
+CV.prototype.adahisteq_helper = function( radius , trim , record ) {
 	var debug = [] ;
 	if ( trim == null )
 		trim = 0;
@@ -757,9 +764,13 @@ CV.prototype.adahisteq = function( radius , trim ) {
 			return Math.min( 255 , Math.round(Math.max( 0 ,  val - min ) * k)  );
 		}
 		// process RGB ignore A
-		imgData[ sub * 4 + 0 ] = conv( imgData[ sub * 4 + 0 ] )
-		imgData[ sub * 4 + 1 ] = conv( imgData[ sub * 4 + 1 ] )
-		imgData[ sub * 4 + 2 ] = conv( imgData[ sub * 4 + 2 ] )
+		if ( record != null )
+			record[ sub ] = {min: min , max : max};
+		else { // if no provided, write back
+			imgData[ sub * 4 + 0 ] = conv( imgData[ sub * 4 + 0 ] )
+			imgData[ sub * 4 + 1 ] = conv( imgData[ sub * 4 + 1 ] )
+			imgData[ sub * 4 + 2 ] = conv( imgData[ sub * 4 + 2 ] )
+		}
 	}
 	
 	for ( i = 0 ; i <= h ; ++ i ){
@@ -812,6 +823,66 @@ CV.prototype.adahisteq = function( radius , trim ) {
 			}
 		}
 	}
-	console.log( debug );
+	//console.log( debug );
 	return this ;
+}
+CV.prototype.adahisteq = function( radius , trim , grid ) {
+	if ( grid == null || grid == 0  )
+		return this.adahisteq_helper( radius , trim );//write back
+	else{
+		var info = {};
+		this.adahisteq_helper( radius , trim , info ); // write range info to info
+		var imgData = this.imgData.data ;
+		var len = imgData.length;
+		var i , j , k , l , x , y ;
+		var w = this.imgData.width ,
+			h = this.imgData.height;
+		for ( i = 0 ; i <= h ; ++ i ) 
+			for ( j = 0 ; j <= w ; ++j ){
+				var gridlx = Math.floor(i / grid) * grid ;
+				var gridhx = Math.ceil(i / grid) * grid ;					
+				var gridly = Math.floor(j / grid ) * grid ;
+				var gridhy = Math.ceil(j / grid) * grid ;	
+				if ( gridhx >= h ) gridhx = h-1 ;
+				if ( gridhy >= w ) gridhy = w-1 ;
+				
+				function conv( val , range ){
+					var k = 255 / ( range.max - range.min ) ;
+					return Math.min( 255 , 
+						Math.round(
+							Math.max( 0 ,  val - range.min )
+								* k)
+						);
+				}
+				function GETSUB( l , r ){
+					return l*w+r;
+				}
+				var sub = GETSUB( i , j ) ;
+				var coeff = 1 / ( grid * grid );
+				//assume grayscale
+				var original_value = imgData[ sub*4  ] ;
+				if ( info[ GETSUB(gridhx,gridhy) ] == null ){
+					console.log( "fuck" )
+				}
+				// nasty fix when gridlx==gridly==i
+				var v1 = conv( original_value , info[ GETSUB(gridlx,gridly) ] );
+				var v2 = conv( original_value , info[ GETSUB(gridlx,gridhy) ] );
+				var v3 = conv( original_value , info[ GETSUB(gridhx,gridly) ] );
+				var v4 = conv( original_value , info[ GETSUB(gridhx,gridhy) ] );
+				if ( gridlx == gridhx ){ gridhx += grid/2; gridlx -= grid/2 ;}
+				if ( gridly == gridhy ){ gridhy += grid/2; gridly -= grid/2 ;}
+				var finalv = ( 	v1*(i-gridlx)*(j-gridly) + 
+								v2*(i-gridlx)*(gridhy-j) +
+								v3*(gridhx-i)*(j-gridly)+
+								v4*(gridhx-i)*(gridhy-j)
+							) * coeff ;
+				finalv = Math.round( finalv );
+				if ( finalv < 0 ) finalv = 0 ;
+				if ( finalv > 255 ) finalv = 255 ;
+				for ( var k = 0 ; k < 3 ; ++ k ){
+					this.imgData.data[ sub*4 + k ] = finalv ;
+				}
+			}
+		return this ;
+	}
 }
