@@ -734,10 +734,12 @@ CV.prototype.histeq = function( trim ){
 // If `record` is provided, this routine writes range info to `record`.
 // Otherwise it does a *naive* AHE and write back to `this`
 //
-CV.prototype.adahisteq_helper = function( radius , trim , record ) {
+CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 	var debug = [] ;
 	if ( trim == null )
 		trim = 0;
+	if ( grid == null )
+		grid = 1 ;
 	var imgData = this.imgData.data ;
 	var len = imgData.length;
 	var i , j , k , l , x , y ;
@@ -749,6 +751,8 @@ CV.prototype.adahisteq_helper = function( radius , trim , record ) {
 	var clo = this.clone();
 	
 	function stat( hist , sum , i , j , clo ){
+		if ( (i != h-1 && i % grid) || (j != w-1 && j%grid) )
+			return ;
 		var min = 0 , max = 255 , accum = 0 , crit = sum * trim   ;
 		while ( (accum += hist[min] ) <= crit && min <= 255 )
 			++min ;
@@ -831,7 +835,7 @@ CV.prototype.adahisteq = function( radius , trim , grid ) {
 		return this.adahisteq_helper( radius , trim );//write back
 	else{
 		var info = {};
-		this.adahisteq_helper( radius , trim , info ); // write range info to info
+		this.adahisteq_helper( radius , trim , info , grid ); // write range info to info
 		var imgData = this.imgData.data ;
 		var len = imgData.length;
 		var i , j , k , l , x , y ;

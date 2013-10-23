@@ -37,6 +37,10 @@ function updateImg(){
 //-------------------------------
 //
 function loadImg(){
+	function autoSetParam(){
+		$('#adaradius').val( Math.max( 10 , imgParam.width / 25 ) );
+		$('#adagrid').val( Math.max( 10 , imgParam.width / 27 ) );
+	}
 	function fitDimensions(){
 		imgParam = getOriginalImageDimension( $('#imgLoad')[0] )
 		;// DEPRECATED: because this gets the 'resized' dimension of the image
@@ -44,10 +48,12 @@ function loadImg(){
 			var target_width = $('#canvas_col').width();
 			var ratio = target_width / imgParam.width ;
 			$('#myCanvas').css('zoom',ratio);//scale to fit
+			autoSetParam();
 		}
 		else{ //preview image
 			imgParam.width = $('#imgLoad')[0].width
 			imgParam.height = $('#imgLoad')[0].height
+			autoSetParam();	
 			$('#myCanvas').css('transform','');//reset transform
 			if ( $('#canvas_col').width() < imgParam.width ){
 				imgParam.width = $('#canvas_col').width();
@@ -57,6 +63,7 @@ function loadImg(){
 		}
 		$('#myCanvas').attr('width' , imgParam.width );
 		$('#myCanvas').attr('height' ,imgParam.height );
+		
 	}
 	
 	var c=canvas=$("#myCanvas")[0];
