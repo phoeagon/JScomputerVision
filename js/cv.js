@@ -730,9 +730,13 @@ CV.prototype.histeq = function( trim ){
 //
 //-----------------------------------------
 //
-// ## 
+// ## Helper function for Histogram equalization
+//
 // If `record` is provided, this routine writes range info to `record`.
 // Otherwise it does a *naive* AHE and write back to `this`
+//
+// If `grid` is specified, only pixels on the sampling grid each `grid-1` pixels
+// from each other are processed.
 //
 CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 	var debug = [] ;
@@ -767,7 +771,7 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 		function conv( val ){
 			return Math.min( 255 , Math.round(Math.max( 0 ,  val - min ) * k)  );
 		}
-		// process RGB ignore A
+		;// process RGB ignore A
 		if ( record != null )
 			record[ sub ] = {min: min , max : max};
 		else { // if no provided, write back
@@ -778,13 +782,13 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 	}
 	
 	for ( i = 0 ; i <= h ; ++ i ){
-		//console.log("Row: "+i );
+		;//console.log("Row: "+i );
 		var tworadius = Math.min(radius,i)+Math.min(radius,h-i)  ; //used to be 2*radius
 		;// init hist[] array
 		var hist = {};
 		for ( j = 0 ; j < 256 ; ++j ) 
 			hist[j] = 0 ;
-		// calc context for first pixel ( except for the first )
+		;// calc context for first pixel ( except for the first )
 		for ( y = 0 ; y < 2*radius ; ++ y ){
 			for ( x = 0 ; x < tworadius + 1 ; ++ x ){
 				var sub = GETSUB( i - radius + x , y );
@@ -799,15 +803,15 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 		}
 		var sum = (tworadius + 1)*(tworadius+1)*3 ; //3 channels
 		for ( j = radius ; j <= w - radius ; ++ j ){
-			// for each pixel add the first column
+			;// for each pixel add the first column
 			for ( x = 0 ; x < tworadius + 1 ; ++ x ){
 				var sub = GETSUB( i - radius + x , j + radius ) ;
 				for ( k = 0 ; k < 3 ; ++ k ) // calc RGB ignore A
 					hist[ clo.imgData.data[ k + sub*4 ] ] ++ ;
 			}
-			// do statistics
+			;// do statistics
 			stat( hist , sum , i , j , clo );
-			// remove last column
+			;// remove last column
 			for ( x = 0 ; x < tworadius + 1 ; ++ x ){
 				var sub = GETSUB( i - radius + x , j - radius ) ;
 				for ( k = 0 ; k < 3 ; ++ k ) // calc RGB ignore A
@@ -827,9 +831,30 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 			}
 		}
 	}
-	//console.log( debug );
+	;//console.log( debug );
 	return this ;
 }
+//
+//-------------------------------------------------------------
+//
+// ## Adaptive Histogram Equalization
+//
+// This routine implements the *adaptive histogram equalization* as is
+// described in Pizer, Stephen M., et al. 
+// *Adaptive histogram equalization and its variations.*
+//  (http://www.cs.unc.edu/Research/MIDAG/pubs/papers/Adaptive%20Histogram%20Equalization%20and%20Its%20Variations.pdf)
+//
+// This routine takes in three parameters. `radius` specifies 
+// the radius of context calculation in number of pixels . 
+//	With `radius` set to 4, it calculates a matrix of (4*2+1)(4*2+1)=9*9
+//  pixels as the context for each sampling point. `trim` specifies the
+//  the percentage of pixels at either extreme to be eliminated (rounded to 
+//  the new boundary). With `trim` set to `5`, it discards 5% darkest and
+//  5% brightest pixels when calculating a grayscale distribution. `grid`
+//  specifies the interval of sampling points on the sampling grid.
+//
+//  This routine returns the `CV` object processed on.
+//
 CV.prototype.adahisteq = function( radius , trim , grid ) {
 	if ( grid == null || grid == 0  )
 		return this.adahisteq_helper( radius , trim );//write back
