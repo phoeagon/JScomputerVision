@@ -40,14 +40,14 @@ function loadImg(){
 	function fitDimensions(){
 		imgParam = getOriginalImageDimension( $('#imgLoad')[0] )
 		;// DEPRECATED: because this gets the 'resized' dimension of the image
-		imgParam.width = $('#imgLoad')[0].width
-		imgParam.height = $('#imgLoad')[0].height
 		if ( $('#fullImg').is(':checked') ){
 			var target_width = $('#canvas_col').width();
 			var ratio = target_width / imgParam.width ;
 			$('#myCanvas').css('zoom',ratio);//scale to fit
 		}
 		else{ //preview image
+			imgParam.width = $('#imgLoad')[0].width
+			imgParam.height = $('#imgLoad')[0].height
 			$('#myCanvas').css('transform','');//reset transform
 			if ( $('#canvas_col').width() < imgParam.width ){
 				imgParam.width = $('#canvas_col').width();
