@@ -38,6 +38,14 @@
 	<div class="demo-container">
 			<div id="placeholder" class="demo-placeholder"></div>
 		</div>
+	
+	<div>
+		<form id="upload_form">
+		<input type='file' id="imgInp" /><br/>
+		<input type='checkbox' id='fullImg' checked="true"/>Process original image not scaled (slow)
+		</form>
+	</div>
+	<hr/>
 	</div>
 	
 	<div class="span5 fullpagecol" id='canvas_col' style='background-color:rgba(233,255,255,0.4);'>
@@ -49,13 +57,6 @@
 	
 	<div class="span3 fullpagecol pull-right" style='background-color:rgba(255,230,255,0.3);position:relative;z-index:100;'>
 		<h2>Tools</h2>
-		<div>
-			<form id="upload_form">
-			<input type='file' id="imgInp" /><br/>
-			<input type='checkbox' id='fullImg' checked="true"/>Process original image not scaled (slow)
-			</form>
-		</div>
-		<hr/>
 		<div>
 		<a href="#" id="auto_thresholdImg" class='btn' style='width:90%;'>Otsu-Threshold</a><br/>
 			Threshold: <input type='number' min='0' max='255' id="thresv" style='width:30%;'/>
