@@ -593,9 +593,67 @@ CV.prototype.diff = function( obj ){
 CV.prototype.hitormiss = function( b1 , b2 ){
 	if ( b2== null )
 		var b2 = b1; //fallback to classical pattern matching
-	var T = this.clone( ) ;
-	T.invert().erode( b2 ) ;
-	return this.erode( b1 ).intersect( T );
+	var tmp=[];
+	var imgData = this.imgData.data;
+	var len = imgData.length;
+	var i , j , k , l;
+	var w = this.imgData.width ,
+		h = this.imgData.height;
+	var m_w = b1.w ,
+		m_h = b1.h;
+	var bdw = Math.floor( m_w / 2 ),
+	    bdh = Math.floor( m_h / 2 );
+	function GETSUB( l , r ){
+		return l*w+r;
+	}
+	function GETMSUB( l , r ){
+		return l*m_w + r;
+	}
+	
+	var fg_color = colors.white ;
+	var bg_color = colors.black ;
+
+		for ( i = bdh ; i < h-bdh ; ++i )
+			for ( j = bdw ; j<w-bdw ; ++j ){ //iterate through pixels on the processed image
+				var cur_value = 255;//a placeholder to do bitwise operations
+				var cur_v2	  = 0  ;		
+				for ( k = 0; k < m_h ; ++k )
+					for ( l = 0 ; l < m_w ; ++l ){ //iterate through the matrix
+							;//if pixel selected by brush
+							var sub = GETSUB( i + k - bdh , j + l - bdw );//get subscription
+							var tmp_color = ( ( imgData[ sub * 4 ] +
+											imgData[ sub*4 + 1 ]
+											+ imgData[ sub * 4 + 2 ] )
+											/ 3 ); 
+							//console.log(  255+tmp_color-fit_color[0] );
+						if ( b1.data[ GETMSUB( k , l ) ] ){
+							cur_value = Math.min( cur_value ,
+								( 255+tmp_color-fg_color[0] ) 
+							 );
+						;//console.log( [ imgData[ sub* 4 ] , fit_color[0] ] )
+						}
+						if ( b2.data[ GETMSUB( k , l )] ){;//if pixel selected by brush
+							cur_v2 = Math.max( cur_v2 ,
+								( tmp_color-bg_color[0] ) 
+							 );
+						}
+					}
+				var sub = GETSUB( i  , j  );	//subscription of the larger (processed image)
+				if ( cur_v2 > cur_value )
+					cur_v2 = cur_value ;
+				;//if ( cur_v2 != cur_value )
+				;//	console.log([cur_value,cur_v2]);
+				tmp[ sub*4 ] = cur_value - cur_v2 ;//R
+				tmp[ sub*4 + 1 ] = cur_value - cur_v2;//G
+				tmp[ sub*4 + 2 ] = cur_value - cur_v2;//B
+				tmp[ sub*4 + 3 ] = imgData[ sub*4 + 3 ];//A
+				;//if ( imgData[ sub*4 ] !== tmp[ sub*4 ]  )
+				;//	console.log("#");;
+			}
+		for ( i = 0 ; i < len ; ++ i )
+			imgData[ i ] = tmp [ i ]; //copy back
+
+	return this;
 }
 //
 //------------------------------------------------------------

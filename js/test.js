@@ -71,6 +71,7 @@ function testDilate(){
 
 function potato(){//WTF!
 	loadImg();
+
 	var queue = [] ; //execution queue
 	var Tb , Tc , T , Td , Tmask;
 	$('#progress_splash').css('display','block');
