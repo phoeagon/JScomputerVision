@@ -66,7 +66,7 @@ function CV ( imgData ){
 //
 // This routine returns the histogram as an `Array`
 //
-CV.prototype.histogram = function( normalize ){
+CV.prototype.histogram = function ( normalize ){
 	var hist = [] , len = this.imgData.data.length ;
 	var imgData = this.imgData.data;
 	var i;/*placeholder*/
@@ -157,7 +157,7 @@ CV.prototype.grayscale = function ( weight ){
 //
 // This routine returns the threshold value returned by the Otsu method.
 //
-CV.prototype.otsu = function( ){
+CV.prototype.otsu = function ( ){
 	var hist = this.histogram(0);//no normalization
 	var imgData = this.imgData.data , 
 		len = imgData.length ;
@@ -207,7 +207,7 @@ CV.prototype.otsu = function( ){
 //
 // This routine returns the `CV` object with processed data.
 //
-CV.prototype.threshold = function( thres , white , black ){
+CV.prototype.threshold = function ( thres , white , black ){
 	if ( thres == null )
 		thres = this.otsu();	//auto threshold
 	if ( white == null || black == null ){
@@ -266,7 +266,7 @@ CV.prototype.threshold = function( thres , white , black ){
 //
 // This routine returns the `CV` object processed.
 //
-CV.prototype.dilate = function( matrix , fit_color , iteration ){
+CV.prototype.dilate = function ( matrix , fit_color , iteration ) {
 	if ( fit_color == null )
 		fit_color = colors.white;
 	if ( iteration == undefined || iteration < 1 )
@@ -337,7 +337,7 @@ CV.prototype.dilate = function( matrix , fit_color , iteration ){
 //
 // This routine returns the `CV` object.
 //
-CV.prototype.erode = function( matrix , fit_color , iteration){
+CV.prototype.erode = function ( matrix , fit_color , iteration){
 	if ( fit_color == null )
 		fit_color = colors.white;
 	if ( iteration == undefined || iteration < 1 )
@@ -375,7 +375,7 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 											imgData[ sub*4 + 1 ]
 											+ imgData[ sub * 4 + 2 ] )
 											/ 3 ); 
-							//console.log(  255+tmp_color-fit_color[0] );
+							;//console.log(  255+tmp_color-fit_color[0] );
 							cur_value = Math.min( cur_value ,
 								( 255+tmp_color-fit_color[0] ) /*&&
 								  imgData[ sub * 4 + 1 ]==fit_color[1] &&
@@ -408,7 +408,7 @@ CV.prototype.erode = function( matrix , fit_color , iteration){
 //
 // This routine returns the `CV` object.
 //
-CV.prototype.open = function( matrix , fit_color , iteration){
+CV.prototype.open = function ( matrix , fit_color , iteration){
 	return this.erode( matrix , fit_color , iteration )
 				.dilate( matrix , fit_color , iteration );
 }
@@ -423,7 +423,7 @@ CV.prototype.open = function( matrix , fit_color , iteration){
 //
 // This routine returns the `CV` object.
 //
-CV.prototype.close = function( matrix , fit_color , iteration){
+CV.prototype.close = function ( matrix , fit_color , iteration){
 	return this.dilate( matrix , fit_color , iteration )
 				.erode( matrix , fit_color , iteration );
 }
@@ -438,7 +438,7 @@ CV.prototype.close = function( matrix , fit_color , iteration){
 //
 // This routine returns the `CV` object.
 //
-CV.prototype.closeth = function( matrix , fit_color , iteration){
+CV.prototype.closeth = function ( matrix , fit_color , iteration){
 	var T = this.clone();
 	return this.diff( T.close( matrix , fit_color , iteration ) );
 }
@@ -452,7 +452,7 @@ CV.prototype.closeth = function( matrix , fit_color , iteration){
 //
 // This routine returns the `CV` object.
 //
-CV.prototype.openth = function( matrix , fit_color , iteration){
+CV.prototype.openth = function ( matrix , fit_color , iteration){
 	var T = this.clone();
 	return this.diff( T.open( matrix , fit_color , iteration ) );
 }
@@ -468,7 +468,7 @@ CV.prototype.openth = function( matrix , fit_color , iteration){
 //
 // This routine returns the `CV` object.
 //
-CV.prototype.boundary = function( matrix , fit_color ){
+CV.prototype.boundary = function ( matrix , fit_color ){
 	if ( !matrix ) 
 		var matrix = brush.rect(3,3);
 	var T = this.clone( );
@@ -480,7 +480,7 @@ CV.prototype.boundary = function( matrix , fit_color ){
 // ## Pixel-wise Operation
 //
 //
-CV.prototype.pixwiseOp = function( obj , op ){
+CV.prototype.pixwiseOp = function ( obj , op ){
 	if ( obj.cv_js ) //if another CV instance
 		var imgD = obj.imgData ; 
 	else 
@@ -514,7 +514,7 @@ CV.prototype.pixwiseOp = function( obj , op ){
 //
 //  whereas `R`, `G`, `B`, `A` represent the integer value of each channel (0~255)
 //
-CV.prototype.map = function( op ){
+CV.prototype.map = function ( op ){
 	var dt = this.imgData.data ; 
 	for ( var i = 0 ; i < this.imgData.data.length ; i += 4 ){
 		var T = op([ dt[i] , dt[i+1] , dt[i+2] , dt[i+3] ]);//rgba
@@ -532,7 +532,7 @@ CV.prototype.map = function( op ){
 // This routine implements the set *union* operation. It takes in
 // the `CV` object to union with and returns the resulting `CV` object.
 //
-CV.prototype.union = function( obj ){
+CV.prototype.union = function ( obj ){
 	return this.pixwiseOp( obj , Math.max );
 }
 //
@@ -543,7 +543,7 @@ CV.prototype.union = function( obj ){
 //  This routine implements the inversion (negation) operation.
 //  It returns the current `CV` object after operating on it.
 //
-CV.prototype.invert = function(){
+CV.prototype.invert = function (){
 	function inv( arr ){
 		arr[0] = 255-arr[0];
 		arr[1] = 255-arr[1];
@@ -561,7 +561,7 @@ CV.prototype.invert = function(){
 // This routine implements the set *intersection* operation. It takes in
 // the `CV` object to operate against and returns the resulting `CV` object.
 //
-CV.prototype.intersect = function( obj ){
+CV.prototype.intersect = function ( obj ){
 	return this.pixwiseOp( obj , Math.min );
 }
 //
@@ -572,7 +572,7 @@ CV.prototype.intersect = function( obj ){
 // This routine implements the *difference* operation. It takes in
 // the `CV` object to compare against and returns the resulting `CV` object.
 //
-CV.prototype.diff = function( obj ){
+CV.prototype.diff = function ( obj ){
 	function minus( a , b ) { return a - b } 
 	return this.pixwiseOp( obj , minus );
 }
@@ -590,7 +590,7 @@ CV.prototype.diff = function( obj ){
 //
 // This routine returns the `CV` object operated on.
 //
-CV.prototype.hitormiss = function( b1 , b2 ){
+CV.prototype.hitormiss = function ( b1 , b2 ){
 	if ( b2== null )
 		var b2 = b1; //fallback to classical pattern matching
 	var T = this.clone( ) ;
@@ -612,7 +612,7 @@ CV.prototype.hitormiss = function( b1 , b2 ){
 //
 //  This routine returns the `CV` object operated on.
 //
-CV.prototype.thin = function( b1 , b2 , c1 , c2 ){
+CV.prototype.thin = function ( b1 , b2 , c1 , c2 ){
 	if ( b1 == null )
 		var b1 = brush.thinfg();
 	if ( b2==null )
@@ -621,7 +621,7 @@ CV.prototype.thin = function( b1 , b2 , c1 , c2 ){
 		var c1 = brush.octagonalfg();
 	if ( c2==null )
 		var c2 = brush.octagonalbg()
-		//var b2 = brush.homobox( 1 )
+		;//var b2 = brush.homobox( 1 )
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
 		this.diff( T.hitormiss( b1 , b2 ) );
@@ -643,7 +643,7 @@ CV.prototype.thin = function( b1 , b2 , c1 , c2 ){
 // **TODO**
 // This routine is still under construction.
 //
-CV.prototype.thick = function( b1 , b2 , c1 , c2 ){
+CV.prototype.thick = function ( b1 , b2 , c1 , c2 ){
 	if ( b1 == null )
 		var b1 = brush.thinfg();
 	if ( b2==null )
@@ -652,7 +652,7 @@ CV.prototype.thick = function( b1 , b2 , c1 , c2 ){
 		var c1 = brush.octagonalfg();
 	if ( c2==null )
 		var c2 = brush.octagonalbg()
-		//var b2 = brush.homobox( 1 )
+		;//var b2 = brush.homobox( 1 )
 	for ( var i = 0 ; i < 4 ; ++ i ){
 		var T = this.clone( );
 		this.union( T.hitormiss( b1 , b2 ) );
@@ -674,8 +674,8 @@ CV.prototype.thick = function( b1 , b2 , c1 , c2 ){
 // This method returns a newly constructed copy of the current `CV` object.
 // Corresponding data are deep-copied.
 //
-CV.prototype.clone = function(){
-	//if ( $ || jQuery ){ //we cannot directly deep copy a custom object even with JQ
+CV.prototype.clone = function (){
+	;//if ( $ || jQuery ){ //we cannot directly deep copy a custom object even with JQ
 		var dataCopy = new Uint8ClampedArray(this.imgData.data);
 		var canvas = document.createElement('canvas');
 		var T = canvas.getContext('2d').createImageData(this.imgData.width, this.imgData.height);
@@ -684,7 +684,7 @@ CV.prototype.clone = function(){
 				imgData : T ,
 				cv_js   : true
 			})
-	//}return new CV( JSON.parse(JSON.stringify(this)) );
+	;//}return new CV( JSON.parse(JSON.stringify(this)) );
 }
 //
 // ------------------------------------------------------------
@@ -727,7 +727,7 @@ CV.prototype.fromBrush = function ( br ){
 //
 // This routine returns the `brush` object constructed.
 //
-CV.prototype.toBrush = function(){
+CV.prototype.toBrush = function (){
 	var T = {
 		w : this.imgData.width , 
 		h : this.imgData.height ,
@@ -743,7 +743,12 @@ CV.prototype.toBrush = function(){
 //
 //------------------------------------
 //
-CV.prototype.log = function(){
+// ## Logarithm operation
+//
+// This routine does a logarithm mapping for all pixels in
+// the image contained in the current `CV` object.
+//
+CV.prototype.log = function (){
 	var k = 255 / Math.log( 256 ) ;
 	this.map( function(pixel){
 		for (i=0;i<3;++i)
@@ -752,7 +757,13 @@ CV.prototype.log = function(){
 	})
 	return this 
 }
-CV.prototype.invlog = function(){
+//
+// ## Invert Logarithm operation
+//
+// This routine does a invert logarithm mapping for all pixels in
+// the image contained in the current `CV` object.
+//
+CV.prototype.invlog = function (){
 	var k = Math.log( 256 ) / 255;
 	this.map( function(pixel){
 		for (i=0;i<3;++i)
@@ -761,7 +772,13 @@ CV.prototype.invlog = function(){
 	})
 	return this 
 }
-CV.prototype.power = function( gamma ){
+//
+// ## Power operation
+//
+// This routine does a power (x'=c*x^gamma) mapping for all pixels in
+// the image contained in the current `CV` object.
+//
+CV.prototype.power = function ( gamma ){
 	var k = Math.exp( Math.log(255) * gamma ) / 255;
 	this.map( function(pixel){
 		for (i=0;i<3;++i)
@@ -770,9 +787,24 @@ CV.prototype.power = function( gamma ){
 	})
 	return this 
 }
-CV.prototype.histeq = function( trim ){
+//
+// ## Histogram Equalization
+//
+// This routine implements a histogram equalization that
+// samples the whole image.
+//
+// This routine takes in a parameter `trim` indicating the
+// percentage of pixels darkest or lowest to be discarded when
+// taking the statistics for a grayscale range. For instance,
+// with `trim` set to `0.05`, 5% darkest and 5% brightest pixels
+// are rounded and thus 90% are taken into account.
+//
+// This routine returns the `CV` object processed
+//
+CV.prototype.histeq = function ( trim ){
 	if ( trim == null )
 		trim = 0;
+	;// get range
 	var hist = this.histogram( true ) , min = 0 , max = 255;
 	var accu = 0 ;
 	while( (accu+=hist[min])<=trim && min < 255) 
@@ -784,7 +816,8 @@ CV.prototype.histeq = function( trim ){
 		min -- ; 
 	if ( max!== 255 )
 		max ++ ;
-	//console.log( [ min , max ] );
+	;//console.log( [ min , max ] );
+	;// apply mapping
 	if ( min - max == 0 ){ min = 127 ; max = 128 };
 	var k = 255 / ( max - min ) 
 	this.map( function(pixel){
@@ -794,7 +827,7 @@ CV.prototype.histeq = function( trim ){
 		}
 		return pixel;
 	})
-	return this ;
+	return this ; //return this instance
 }
 //
 //-----------------------------------------
@@ -807,8 +840,9 @@ CV.prototype.histeq = function( trim ){
 // If `grid` is specified, only pixels on the sampling grid each `grid-1` pixels
 // from each other are processed.
 //
-CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
+CV.prototype.adahisteq_helper = function ( radius , trim , record , grid ) {
 	var debug = [] ;
+	;// initialize params
 	if ( trim == null )
 		trim = 0;
 	if ( grid == null )
@@ -818,14 +852,17 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 	var i , j , k , l , x , y ;
 	var w = this.imgData.width ,
 		h = this.imgData.height;
-	function GETSUB( l , r ){
+		
+	function GETSUB( l , r ){ // subscription
 		return l*w+r;
 	}
-	var clo = this.clone();
+	var clo = this.clone(); //make a clone
 	
 	function stat( hist , sum , i , j , clo ){
+		;// do statistics for a pixel at [i,j] according to its
+		;//   stored copy at `clo` and distribution described in `hist` and `sum`
 		if ( (i != h-1 && i % grid) || (j != w-1 && j%grid) )
-			return ;
+			return ; //ignore pixels not on grid
 		var min = 0 , max = 255 , accum = 0 , crit = sum * trim   ;
 		while ( (accum += hist[min] ) <= crit && min <= 255 )
 			++min ;
@@ -850,26 +887,30 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 		}
 	}
 	
-	for ( i = 0 ; i <= h ; ++ i ){
+	for ( i = 0 ; i <= h ; ++ i )if (i == h-1 || i % grid==0){ // loop through all rows
 		;//console.log("Row: "+i );
-		var tworadius = Math.min(radius,i)+Math.min(radius,h-i)  ; //used to be 2*radius
+		var tworadius = Math.min(radius,i)+Math.min(radius,h-i)  ; //used to be 2*radius , this
+			;// one is fixed for the case when we have to trim the context window at border
 		;// init hist[] array
 		var hist = {};
 		for ( j = 0 ; j < 256 ; ++j ) 
 			hist[j] = 0 ;
 		;// calc context for first pixel ( except for the first )
-		for ( y = 0 ; y < 2*radius ; ++ y ){
+		for ( y = 0 ; y < 2*radius ; ++ y ){ // loop through col
 			for ( x = 0 ; x < tworadius + 1 ; ++ x ){
 				var sub = GETSUB( i - radius + x , y );
 				for ( k = 0 ; k < 3 ; ++ k ) // calc RGB ignore A
 					hist[ clo.imgData.data[ k + sub*4 ] ]++ ;
 			}
+			;// update sum
 			var cnt = 0;
 			for ( v = 0 ; v < 256 ; ++ v )
 				cnt += hist[v] ;
+			;// do statistics
 			if ( y >= radius )
 				stat( hist , cnt , i , y-radius , clo );
 		}
+		; // process a normal-sized context window
 		var sum = (tworadius + 1)*(tworadius+1)*3 ; //3 channels
 		for ( j = radius ; j <= w - radius ; ++ j ){
 			;// for each pixel add the first column
@@ -881,18 +922,22 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 			;// do statistics
 			stat( hist , sum , i , j , clo );
 			;// remove last column
-			for ( x = 0 ; x < tworadius + 1 ; ++ x ){
+			for ( x = 0 ; x < tworadius + 1 ; ++ x ){ //loop in row-coord
 				var sub = GETSUB( i - radius + x , j - radius ) ;
 				for ( k = 0 ; k < 3 ; ++ k ) // calc RGB ignore A
 					hist[ clo.imgData.data[ k + sub*4 ] ] -- ;
 			}
 		}
+		;// process the pixels on right-most part where context window has to be trimemd
 		for ( y = 0 ; y < radius*2 ; ++ y ){
+			;// calculate sum
 			var cnt = 0 ; 
 			for ( v = 0 ; v < 256 ; ++ v )
 				cnt += hist[v] ;
+			;// do statistics
 			if ( y <= radius )
 				stat( hist , cnt , i , w+y-radius+1 , clo );
+			;// update histogram
 			for ( x = 0 ; x < tworadius + 1 ; ++ x ){
 				var sub = GETSUB( i - radius + x , w-2*radius+y );
 				for ( k = 0 ; k < 3 ; ++ k ) // calc RGB ignore A
@@ -901,7 +946,7 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 		}
 	}
 	;//console.log( debug );
-	return this ;
+	return this ; //return current instance
 }
 //
 //-------------------------------------------------------------
@@ -912,6 +957,10 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 // described in Pizer, Stephen M., et al. 
 // *Adaptive histogram equalization and its variations.*
 //  (http://www.cs.unc.edu/Research/MIDAG/pubs/papers/Adaptive%20Histogram%20Equalization%20and%20Its%20Variations.pdf)
+//
+// If `grid` is set to `null`, this runs a naive implementation by sampling each
+// pixels on its own (the model described as slow and having unwanted features in 
+// the above mentioned work).
 //
 // This routine takes in three parameters. `radius` specifies 
 // the radius of context calculation in number of pixels . 
@@ -924,10 +973,10 @@ CV.prototype.adahisteq_helper = function( radius , trim , record , grid ) {
 //
 //  This routine returns the `CV` object processed on.
 //
-CV.prototype.adahisteq = function( radius , trim , grid ) {
-	if ( grid == null || grid == 0  )
+CV.prototype.adahisteq = function ( radius , trim , grid ) {
+	if ( grid == null || grid == 0  )// if non-adaptive
 		return this.adahisteq_helper( radius , trim );//write back
-	else{
+	else{ // do an adaptive one
 		var info = {};
 		this.adahisteq_helper( radius , trim , info , grid ); // write range info to info
 		var imgData = this.imgData.data ;
@@ -937,13 +986,16 @@ CV.prototype.adahisteq = function( radius , trim , grid ) {
 			h = this.imgData.height;
 		for ( i = 0 ; i <= h ; ++ i ) 
 			for ( j = 0 ; j <= w ; ++j ){
+				;// x,y coordinates of the sampling grid
 				var gridlx = Math.floor(i / grid) * grid ;
 				var gridhx = Math.ceil(i / grid) * grid ;					
 				var gridly = Math.floor(j / grid ) * grid ;
 				var gridhy = Math.ceil(j / grid) * grid ;	
+				;// round to the boundary of the image
 				if ( gridhx >= h ) gridhx = h-1 ;
 				if ( gridhy >= w ) gridhy = w-1 ;
-				
+				;// a map function operated on each pixel, to calculate the new pixel
+				;// value according to its context distribution
 				function conv( val , range ){
 					var k = 255 / ( range.max - range.min ) ;
 					return Math.min( 255 , 
@@ -952,10 +1004,11 @@ CV.prototype.adahisteq = function( radius , trim , grid ) {
 								* k)
 						);
 				}
-				function GETSUB( l , r ){
+				function GETSUB( l , r ){//used to get subscription
 					return l*w+r;
 				}
 				var sub = GETSUB( i , j ) ;
+				;// setting coefficient `coeff`
 				var coeff = 1; 
 				if ( gridly==gridhy )
 					coeff /= grid ;
@@ -963,16 +1016,14 @@ CV.prototype.adahisteq = function( radius , trim , grid ) {
 				if ( gridhx == gridlx )
 					coeff /= grid ;
 				else coeff /= ( gridhx - gridlx );
-				//assume grayscale
+				;//assume grayscale
 				var original_value = imgData[ sub*4  ] ;
-				if ( info[ GETSUB(gridhx,gridhy) ] == null ){
-					console.log( "fuck" )
-				}
-				// nasty fix when gridlx==gridly==i
+				;// four values calculated by re-mapping color according to four sampling points
 				var v1 = conv( original_value , info[ GETSUB(gridlx,gridly) ] );
 				var v2 = conv( original_value , info[ GETSUB(gridlx,gridhy) ] );
 				var v3 = conv( original_value , info[ GETSUB(gridhx,gridly) ] );
 				var v4 = conv( original_value , info[ GETSUB(gridhx,gridhy) ] );
+				;// nasty fix when gridlx==gridly==i
 				if ( gridlx == gridhx ){ gridhx += grid/2; gridlx -= grid/2 ;}
 				if ( gridly == gridhy ){ gridhy += grid/2; gridly -= grid/2 ;}
 				var finalv = ( 	v4*(i-gridlx)*(j-gridly) + 
@@ -981,12 +1032,25 @@ CV.prototype.adahisteq = function( radius , trim , grid ) {
 								v1*(gridhx-i)*(gridhy-j)
 							) * coeff ;
 				finalv = Math.round( finalv );
+				;// round value to valid inteval
 				if ( finalv < 0 ) finalv = 0 ;
 				if ( finalv > 255 ) finalv = 255 ;
-				for ( var k = 0 ; k < 3 ; ++ k ){
+				for ( var k = 0 ; k < 3 ; ++ k ){ //write back to RGB channels, ignoring A
 					this.imgData.data[ sub*4 + k ] = finalv ;
 				}
 			}
-		return this ;
+		return this ; //return current instance
 	}
 }
+//
+// --------------------------------
+//
+// ## Aliases
+CV.prototype.hist = CV.prototype.histogram ;
+CV.prototype.negate = CV.prototype.invert ;
+CV.prototype.inv = CV.prototype.invert ;
+CV.prototype.erosion = CV.prototype.erode ;
+CV.prototype.dilation = CV.prototype.dilate ;
+CV.prototype.difference = CV.prototype.diff ;
+CV.prototype.bound = CV.prototype.boundary ;
+
