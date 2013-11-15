@@ -245,3 +245,34 @@ $('#adahisteqbtn').click( function(){
 	canvasContext.putImageData( a.adahisteq( radius , trim , grid ).getImgData() , 0 , 0 );
 	drawHist( a );
 })
+$('#sobeledgebtn').click( function(){
+	var T = new CV(getImageData());
+	showCV( T.sobel() );
+})
+$('#sobelhog').click( function(){
+	var T = new CV(getImageData());
+	var result = T.sobel_hog();
+	var tmp = [];
+	for ( var i in result )
+		tmp.push( [ (i*360) , result[i] ] );
+	//sort for better display
+	tmp.sort(function(a,b) { return a[0]-b[0]; } );
+	//console.log( tmp );
+	$.plot("#placeholder", [ { 
+		bars: { show: true } ,
+		data : tmp
+		} ] );
+		
+	var xx = [];
+	for ( var i in tmp )
+		xx.push( tmp[i][1] );
+	var sum = 0;
+	for ( var i in tmp )
+		sum += xx[i];
+	for ( var i in tmp )
+		xx[i] /= sum;
+	
+	window.open().document.write(JSON.stringify( xx ) );
+	return tmp ;
+	
+})

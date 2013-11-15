@@ -162,7 +162,6 @@ function testSobel(){
 }
 function testSobelHOG(){
 	var T = new CV( getImageData() );
-	var br = brush.sobelx();
 	var result = T.sobel_hog();
 	var tmp = [];
 	for ( var i in result )
