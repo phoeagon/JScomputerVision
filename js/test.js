@@ -147,3 +147,30 @@ function showCV( T , noclear ){
 		 T.getImgData() ,
 		0 , 0 ) // draw image back to canvas
 }
+function testConvolution(){
+	var T = new CV( getImageData() );
+	var br = brush.sobelx();
+	result = {};
+	T.convolution( br , result );
+	console.log( result[0] )
+	
+}
+function testSobel(){
+	var T = new CV( getImageData() );
+	var result = {};
+	showCV( T.sobel() );
+}
+function testSobelHOG(){
+	var T = new CV( getImageData() );
+	var br = brush.sobelx();
+	var result = T.sobel_hog();
+	var tmp = [];
+	for ( var i in result )
+		tmp.push( [ (i*360) , result[i] ] );
+	console.log( tmp );
+	$.plot("#placeholder", [ { 
+		bars: { show: true } ,
+		data : tmp
+		} ] );
+	return tmp ;
+}

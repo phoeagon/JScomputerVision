@@ -62,6 +62,50 @@ brush.cross = function( r ){
 //
 //-----------------------------------------
 //
+brush.eye = function( r ){
+    var matrix = [];
+    matrix[ (2*r+1)*(2*r+1)-1 ] = undefined;
+    for (var i=0;i<2*r+1;++i)
+        matrix[i*(2*r+1)+i] = 1 ;
+    return {
+            w : 2*r+1 ,
+            h : 2*r+1 ,
+            data : matrix
+        }
+}
+//
+//-----------------------------------------
+//
+brush.sobelx = function(){
+    var matrix = [];
+    return {
+            w : 3 ,
+            h : 3 ,
+            data : [
+				-1.0,0.0,1.0, 
+				-2.0,0.0,2.0, 
+				-1.0,0.0,1.0
+			]
+        }
+}
+//
+//-----------------------------------------
+//
+brush.sobely = function(){
+    var matrix = [];
+    return {
+            w : 3 ,
+            h : 3 ,
+            data : [
+				-1.0,-2.0,-1.0 , 
+				0.0,0.0,0.0 , 
+				1.0,2.0,1.0
+			]
+        }
+}
+//
+//-----------------------------------------
+//
 brush.octagonalfg = function(){
     return {
             w : 3 ,

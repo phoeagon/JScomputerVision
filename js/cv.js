@@ -1100,6 +1100,118 @@ CV.prototype.adahisteq = function ( radius , trim , grid ) {
 		return this ; //return current instance
 	}
 }
+
+//
+// --------------------------------
+//
+CV.prototype.convolution = function( matrix , result , channels ){
+	if ( channels == null )
+		channels = [0,1,2];//RGB
+	var imgData = this.imgData.data ;
+	var len = imgData.length;
+	var i , j , k , l , x , y , ii , jj ;
+	var w = this.imgData.width ,
+		h = this.imgData.height;
+	function GETSUB( l , r ){//used to get subscription
+		return l*w+r;
+	}
+	var mw = matrix.w , mh = matrix.h ;
+	var deltaw = Math.floor(mw/2) , deltah = Math.floor(mh/2);
+	for ( var ele in channels ){
+		var ele_cnt = parseInt(ele);
+		tmp = {};
+		for ( i = 0 ; i <= h ; ++ i ) 
+				for ( j = 0 ; j <= w ; ++j ){
+					var sub = GETSUB( i , j ) ;
+					tmp[sub] = 0 ;
+					if ( i<deltah || j<deltaw || i>=h-deltah || j>=w-deltaw )
+						continue ;
+					for ( ii = 0 ; ii < mh ; ++ii )
+						for ( jj=0; jj < mw ; ++jj )
+							tmp[ sub ] += matrix.data[ii*mw+jj] * 
+								imgData[ GETSUB( i - deltah + ii ,   j - deltaw + jj )*4+ele_cnt ] ;
+				}
+		result[ele] = tmp ;
+	}
+	return result ;
+}
+//
+// --------------------------------
+//
+CV.prototype.sobel = function( ){
+	var sobelx = brush.sobelx();
+	var sobely = brush.sobely();
+	var grad_x = {};
+	var grad_y = {};
+	this.convolution( sobelx , grad_x );
+	this.convolution( sobely , grad_y );
+	var imgData = this.imgData.data ;
+	var len = imgData.length;
+	var w = this.imgData.width ,
+		h = this.imgData.height;
+	var i , j , k , l , x , y , ii , jj ;
+	
+	function GETSUB( l , r ){//used to get subscription
+		return l*w+r;
+	}
+	var maxv = 0 ;
+	for ( i = 0 ; i <= h ; ++ i ) 
+		for ( j = 0 ; j <= w ; ++j ){
+			var sub = GETSUB( i , j ) ;
+			for ( k = 0 ; k < 3 ; ++ k ){
+				imgData[ sub*4 + k ] = grad_x[k][sub] + grad_y[k][sub] ;
+				maxv = imgData[ sub*4 + k ]  > maxv ? imgData[ sub*4 + k ] : maxv ;
+			}
+		}
+	for ( i = 0 ; i <= h ; ++ i ) 
+		for ( j = 0 ; j <= w ; ++j ){
+			var sub = GETSUB( i , j ) ;
+			for ( k = 0 ; k < 3 ; ++ k ){
+				imgData[ sub*4 + k ] = imgData[ sub*4 + k ]  * 255 / maxv ;
+			}
+		}
+	return this ;
+}
+//
+//----------------------------------------
+//
+CV.prototype.sobel_hog = function( ){
+	var sobelx = brush.sobelx();
+	var sobely = brush.sobely();
+	var grad_x = {};
+	var grad_y = {};
+	this.convolution( sobelx , grad_x );
+	this.convolution( sobely , grad_y );
+	var imgData = this.imgData.data ;
+	var len = imgData.length;
+	var w = this.imgData.width ,
+		h = this.imgData.height;
+	var i , j , k , l , x , y , ii , jj ;
+	var hist = {} ;
+		
+	function GETSUB( l , r ){//used to get subscription
+		return l*w+r;
+	}
+	;//var xx = [] ;
+	for ( i = 0 ; i <= h ; ++ i ) 
+		for ( j = 0 ; j <= w ; ++j ){
+			var sub = GETSUB( i , j ) ;
+			for ( k = 0 ; k < 3 ; ++ k ){
+				if (grad_x[k][sub] == 0 && grad_y[k][sub]==0 )
+					continue ;
+				var angle = Math.round( Math.atan2( grad_x[k][sub] , grad_y[k][sub] ) * 360 / Math.PI )/360;
+				if ( hist[angle]==null )
+					hist[angle] = 0;
+				hist[angle] += Math.abs(grad_x[k][sub]) + Math.abs(grad_y[k][sub]);
+				;//xx .push( Math.atan2( grad_x[k][sub] , grad_y[k][sub] ) )
+				/*if ( hist[angle]==null )
+					hist[angle] = 1; 
+				else hist[angle] ++ ;*/
+			}
+		}
+	//console.log( xx )
+	return hist ;
+}
 //
 // --------------------------------
 //
@@ -1111,4 +1223,5 @@ CV.prototype.erosion = CV.prototype.erode ;
 CV.prototype.dilation = CV.prototype.dilate ;
 CV.prototype.difference = CV.prototype.diff ;
 CV.prototype.bound = CV.prototype.boundary ;
+
 
