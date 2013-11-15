@@ -158,7 +158,8 @@ function testConvolution(){
 function testSobel(){
 	var T = new CV( getImageData() );
 	var result = {};
-	showCV( T.sobel() );
+	//showCV( T.sobel() );
+	showCV( T.laplace() );
 }
 function testSobelHOG(){
 	var T = new CV( getImageData() );

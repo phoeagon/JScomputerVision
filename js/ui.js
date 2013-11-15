@@ -249,6 +249,22 @@ $('#sobeledgebtn').click( function(){
 	var T = new CV(getImageData());
 	showCV( T.sobel() );
 })
+$('#lapedgebtn').click( function(){
+	var T = new CV(getImageData());
+	showCV( T.laplace() );
+})
+$('#robedgebtn').click( function(){
+	var T = new CV(getImageData());
+	showCV( T.roberts() );
+})
+$('#compassedgebtn').click( function(){
+	var T = new CV(getImageData());
+	showCV( T.compass() );
+})
+$('#scharredgebtn').click( function(){
+	var T = new CV(getImageData());
+	showCV( T.scharr() );
+})
 $('#sobelhog').click( function(){
 	var T = new CV(getImageData());
 	var result = T.sobel_hog();

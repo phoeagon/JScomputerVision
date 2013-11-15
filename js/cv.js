@@ -1138,9 +1138,31 @@ CV.prototype.convolution = function( matrix , result , channels ){
 //
 // --------------------------------
 //
+CV.prototype.compass = function( ){
+	return this.xy_gradient( brush.compassx() , brush.compassy() ) ;
+}
+//
+// --------------------------------
+//
 CV.prototype.sobel = function( ){
-	var sobelx = brush.sobelx();
-	var sobely = brush.sobely();
+	return this.xy_gradient( brush.sobelx() , brush.sobely() ) ;
+}
+//
+// --------------------------------
+//
+CV.prototype.roberts = function( ){
+	return this.xy_gradient( brush.robertsx() , brush.robertsy() ) ;
+}
+//
+// --------------------------------
+//
+CV.prototype.scharr = function( ){
+	return this.xy_gradient( brush.scharrx() , brush.scharry() ) ;
+}
+//
+// --------------------------------
+//
+CV.prototype.xy_gradient = function( sobelx , sobely ){
 	var grad_x = {};
 	var grad_y = {};
 	this.convolution( sobelx , grad_x );
@@ -1160,6 +1182,40 @@ CV.prototype.sobel = function( ){
 			var sub = GETSUB( i , j ) ;
 			for ( k = 0 ; k < 3 ; ++ k ){
 				imgData[ sub*4 + k ] = grad_x[k][sub] + grad_y[k][sub] ;
+				maxv = imgData[ sub*4 + k ]  > maxv ? imgData[ sub*4 + k ] : maxv ;
+			}
+		}
+	for ( i = 0 ; i <= h ; ++ i ) 
+		for ( j = 0 ; j <= w ; ++j ){
+			var sub = GETSUB( i , j ) ;
+			for ( k = 0 ; k < 3 ; ++ k ){
+				imgData[ sub*4 + k ] = imgData[ sub*4 + k ]  * 255 / maxv ;
+			}
+		}
+	return this ;
+}
+//
+//------------------------------------------
+//
+CV.prototype.laplace = function( ){
+	var lap = brush.laplace();
+	var result = {};
+	this.convolution( lap , result );
+	var imgData = this.imgData.data ;
+	var len = imgData.length;
+	var w = this.imgData.width ,
+		h = this.imgData.height;
+	var i , j , k , l , x , y , ii , jj ;
+	
+	function GETSUB( l , r ){//used to get subscription
+		return l*w+r;
+	}
+	var maxv = 0 ;
+	for ( i = 0 ; i <= h ; ++ i ) 
+		for ( j = 0 ; j <= w ; ++j ){
+			var sub = GETSUB( i , j ) ;
+			for ( k = 0 ; k < 3 ; ++ k ){
+				imgData[ sub*4 + k ] = result[k][sub] ;
 				maxv = imgData[ sub*4 + k ]  > maxv ? imgData[ sub*4 + k ] : maxv ;
 			}
 		}
