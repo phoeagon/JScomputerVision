@@ -1199,7 +1199,7 @@ CV.prototype.sobel_hog = function( ){
 			for ( k = 0 ; k < 3 ; ++ k ){
 				if (grad_x[k][sub] == 0 && grad_y[k][sub]==0 )
 					continue ;
-				var angle = Math.round( Math.atan2( grad_x[k][sub] , grad_y[k][sub] ) * 360 / Math.PI )/360;
+				var angle = Math.round( Math.atan2( grad_x[k][sub] , grad_y[k][sub] ) * 180 / Math.PI )/360;
 				if ( hist[angle]==null )
 					hist[angle] = 0;
 				hist[angle] += Math.abs(grad_x[k][sub]) + Math.abs(grad_y[k][sub]);

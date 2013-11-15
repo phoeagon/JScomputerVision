@@ -167,6 +167,8 @@ function testSobelHOG(){
 	var tmp = [];
 	for ( var i in result )
 		tmp.push( [ (i*360) , result[i] ] );
+	//sort for better display
+	tmp.sort(function(a,b) { return a[0]-b[0]; } );
 	console.log( tmp );
 	$.plot("#placeholder", [ { 
 		bars: { show: true } ,
