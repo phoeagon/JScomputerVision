@@ -3,13 +3,20 @@ An assignment for Computer Vision
 
 Qiu Zhe
 
+
 ## Quick Start
 
-Upload the whole directory to some webserver.
+This turn-in includes a graphical illustration using HTML and
+a commandline tool.
 
-Open a browser and go to `index.html`.
+The HTML part can be used as usual.
 
-The browser should be HTML5 capable to run this demo.
+The commandline tool requires a working node.JS and some other
+libraries for it to function correctly.
+
+## Commandline Tool:
+
+Usage: node app.js [name of your files]
 
 ## Known issues
 
