@@ -6,7 +6,7 @@ run:
 doc: docs
 	
 handin: *
-	rm handin.tar.gz
+	[ -f handin.tar.gz ] && rm handin.tar.gz || echo ""
 	tar zcf handin.tar.gz *
 
 deploy:
