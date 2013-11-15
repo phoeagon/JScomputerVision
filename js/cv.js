@@ -808,7 +808,7 @@ CV.prototype.toBrush = function (){
 //
 CV.prototype.log = function (){
 	var k = 255 / Math.log( 256 ) ;
-	this.map( function(pixel){
+	this.map( function (pixel){
 		for (i=0;i<3;++i)
 			pixel[i] = Math.log(pixel[i] + 1) * k ;
 		return pixel;
@@ -823,7 +823,7 @@ CV.prototype.log = function (){
 //
 CV.prototype.invlog = function (){
 	var k = Math.log( 256 ) / 255;
-	this.map( function(pixel){
+	this.map( function (pixel){
 		for (i=0;i<3;++i)
 			pixel[i] = Math.exp( pixel[i]*k ) - 1 ;
 		return pixel;
@@ -838,7 +838,7 @@ CV.prototype.invlog = function (){
 //
 CV.prototype.power = function ( gamma ){
 	var k = Math.exp( Math.log(255) * gamma ) / 255;
-	this.map( function(pixel){
+	this.map( function (pixel){
 		for (i=0;i<3;++i)
 			pixel[i] = Math.exp(Math.log(pixel[i])*gamma) / k;
 		return pixel;
@@ -878,7 +878,7 @@ CV.prototype.histeq = function ( trim ){
 	;// apply mapping
 	if ( min - max == 0 ){ min = 127 ; max = 128 };
 	var k = 255 / ( max - min ) 
-	this.map( function(pixel){
+	this.map( function (pixel){
 		for (i=0;i<3;++i){
 			pixel[i] = Math.max( 0 , pixel[i] - min) * k ;
 			pixel[i] = Math.min( pixel[i] , 255 ) ;
@@ -1104,7 +1104,39 @@ CV.prototype.adahisteq = function ( radius , trim , grid ) {
 //
 // --------------------------------
 //
-CV.prototype.convolution = function( matrix , result , channels ){
+// #Convolution
+//
+// This routine implements the convolution operation.
+//
+// It takes in three parameters. `matrix` is the 
+// matrix to do convolution with. `result` is the object
+// to store the result, which would also be returned by
+// the return value of this routine. `channels` is an `Array`
+// object where as RGB channels are indicated as `0`, `1`, `2`, whose
+// appearance in `channels` indicate that this routine should
+// calculate volution on that channel. By default, it calculates
+// convolution on each of the RGB channels, and therefore it's equivalent
+// to specify `[0,1,2]` for `channels`.
+//
+// It returns the resulting matrix of the convolution. The returned object is like:
+//
+//		{
+//			0: /*red channel*/
+//				{
+//					0 : 1 ,
+//					1 : 2 ,
+//					2 : 123 ,
+//					3 : 412 , 
+//					.../*the indices being the subscription*/
+//					w*h : 12
+//				},
+//			1: /*green channel*/
+//				{ ... } ,
+//			2: /*blue channel*/
+//				{ ... }
+//		}
+//
+CV.prototype.convolution = function ( matrix , result , channels ){
 	if ( channels == null )
 		channels = [0,1,2];//RGB
 	var imgData = this.imgData.data ;
@@ -1137,32 +1169,41 @@ CV.prototype.convolution = function( matrix , result , channels ){
 }
 //
 // --------------------------------
+// ## Compass edge detector
 //
-CV.prototype.compass = function( ){
+CV.prototype.compass = function ( ){
 	return this.xy_gradient( brush.compassx() , brush.compassy() ) ;
 }
 //
 // --------------------------------
+// ## Sobel edge detector
 //
-CV.prototype.sobel = function( ){
+CV.prototype.sobel = function ( ){
 	return this.xy_gradient( brush.sobelx() , brush.sobely() ) ;
 }
 //
 // --------------------------------
+// ## Roberts edge detector
 //
-CV.prototype.roberts = function( ){
+CV.prototype.roberts = function ( ){
 	return this.xy_gradient( brush.robertsx() , brush.robertsy() ) ;
 }
 //
 // --------------------------------
+// ## Scharr edge detector
 //
-CV.prototype.scharr = function( ){
+CV.prototype.scharr = function ( ){
 	return this.xy_gradient( brush.scharrx() , brush.scharry() ) ;
 }
 //
 // --------------------------------
 //
-CV.prototype.xy_gradient = function( sobelx , sobely ){
+// ##Helper function for calculating x,y part of gradients
+//
+// This function is used to implement sobel and other x-y-gradient-based
+// edge detectors
+//
+CV.prototype.xy_gradient = function ( sobelx , sobely ){
 	var grad_x = {};
 	var grad_y = {};
 	this.convolution( sobelx , grad_x );
@@ -1197,7 +1238,13 @@ CV.prototype.xy_gradient = function( sobelx , sobely ){
 //
 //------------------------------------------
 //
-CV.prototype.laplace = function( ){
+// ##Laplace Edge detector
+// 
+// This routine implements the Laplace edge detector
+//
+// This routine returns the `CV` object processed on.
+//
+CV.prototype.laplace = function ( ){
 	var lap = brush.laplace();
 	var result = {};
 	this.convolution( lap , result );
@@ -1231,9 +1278,9 @@ CV.prototype.laplace = function( ){
 //
 //----------------------------------------
 //
-CV.prototype.sobel_hog = function( ){
-	var sobelx = brush.sobelx();
-	var sobely = brush.sobely();
+// ##Helper function for calculating histogram with gradient matrix of x and y
+//
+CV.prototype.xy_gradient_hog = function ( sobelx , sobely ){
 	var grad_x = {};
 	var grad_y = {};
 	this.convolution( sobelx , grad_x );
@@ -1265,8 +1312,47 @@ CV.prototype.sobel_hog = function( ){
 				else hist[angle] ++ ;*/
 			}
 		}
-	//console.log( xx )
+	;//console.log( xx )
 	return hist ;
+}
+//
+//----------------------------
+//
+// ##Histogram of Gradient, by Sobel Method
+//
+// This routine implements the HOG (histogram of gradient) by finding
+// the edges with sobel method.
+//
+// This function returns the histogram as an array of 
+//
+//		{ 0: 12 , 43: 13 }
+// 
+// where as the indices correspond to each of the angle of the tangent
+// of each pixel on the edges detected.
+//
+CV.prototype.sobel_hog = function ( ){
+	return this.xy_gradient_hog( brush.sobelx() , brush.sobely() );
+}
+//----------------------------
+//
+// ##Histogram of Gradient, by Sobel Method
+//
+CV.prototype.scharr_hog = function ( ){
+	return this.xy_gradient_hog( brush.scharrx() , brush.scharry() );
+}
+//----------------------------
+//
+// ##Histogram of Gradient, by Sobel Method
+//
+CV.prototype.roberts_hog = function ( ){
+	return this.xy_gradient_hog( brush.robertsx() , brush.robertsy() );
+}
+//----------------------------
+//
+// ##Histogram of Gradient, by Sobel Method
+//
+CV.prototype.compass_hog = function ( ){
+	return this.xy_gradient_hog( brush.compassx() , brush.compassy() );
 }
 //
 // --------------------------------
