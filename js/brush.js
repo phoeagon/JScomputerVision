@@ -292,3 +292,10 @@ brush.rot180 = function( brush ){
 brush.rot270 = function( brush ){
 	return brush.rot90(brush.rot90( brush.rot90( brush ) ) );
 }
+//
+//-------------------------
+//
+try{
+	module.exports = brush ;
+}catch(err){
+}

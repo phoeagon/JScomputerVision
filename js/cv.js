@@ -17,6 +17,12 @@
 //-----------------------------
 //
 
+// ## Hacks for NodeJS
+try{
+	brush = require('./brush.js');
+}catch(err){
+}
+
 // ## Global Color Object
 //
 colors = {
@@ -1366,4 +1372,12 @@ CV.prototype.dilation = CV.prototype.dilate ;
 CV.prototype.difference = CV.prototype.diff ;
 CV.prototype.bound = CV.prototype.boundary ;
 
+//
+//---------------------------------
+// ## Exports `CV` for node.js
+//
+try{
+	module.exports = CV ;
+}catch(err){
+}
 
