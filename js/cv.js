@@ -1173,6 +1173,34 @@ CV.prototype.convolution = function ( matrix , result , channels ){
 	}
 	return result ;
 }
+CV.prototype.blur = function( matrix ){
+	if ( matrix == undefined)
+		var matrix = {
+			w : 3 , h : 3 ,
+			data:[  1 , 1 , 1 ,
+					 1 , 4 , 1  ,
+					 1 , 1 , 1 ]
+		}
+	var sum = 0;
+	for (var i in matrix.data)
+		sum += matrix.data[i];
+	var result = {};
+	this.convolution( matrix , result );
+	var imgData = this.imgData.data ;
+	var len = imgData.length;
+	var w = this.imgData.width ,
+		h = this.imgData.height;
+	var a,b,c;
+	for (a=0;a<3;++a){//channel
+		for (b=0;b<w;++b)
+			for (c=0;c<h;++c){
+				var sub = w*c+b ;
+				imgData[ sub*4 + a ] = result[a][sub] / sum;
+				//console.log(imgData[ sub*4 + a ]);
+			}
+	}
+	return this;
+}
 //
 // --------------------------------
 // ## Compass edge detector

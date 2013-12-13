@@ -176,3 +176,9 @@ function testSobelHOG(){
 		} ] );
 	return tmp ;
 }
+function testBlur(){
+	var T = new CV( getImageData() );
+	canvasContext.putImageData( 
+		 T.blur().getImgData() ,
+		0 , 0 ) // draw image back to canvas
+}
