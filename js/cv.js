@@ -567,7 +567,7 @@ CV.prototype.hitormiss = function( b1 , b2 ){
 	if ( b2==null )
 		b2 = brush.neg( b1 ); 
 	T.invert().erode( b2 ) ;
-	return this.erode( b1 );.intersect( T );
+	return this.erode( b1 ).intersect( T );
 }
 //
 //------------------------------------------------------------
